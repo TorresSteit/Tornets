@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/static/css/AdminpanelDisajn.css">
+</head>
+<body>
+<header>
+    <h1>Welcome to Admin Panel</h1>
+    <nav>
+        <button id="category-button">Categories</button>
+        <button id="product-button">Products</button>
+        <button id="client-button">Clients</button>
+        <button id="infoproduct -button">Info Product</button>
+    </nav>
+</header>
+
+<main>
+    <section id="categories">
+        <h2>Categories</h2>
+        <!-- Список существующих категорий -->
+        <ul id="category-list">
+            <li th:each="category : ${categories}" th:text="${category.title}"></li>
+        </ul>
+        <!-- Форма для добавления новой категории -->
+        <form id="add-category-form" th:action="@{/addCategory}" method="post">
+            <label for="category-name">Name:</label>
+            <input type="text" id="category-name" name="title"> <!-- Параметр title -->
+            <button type="submit">Add Category</button>
+        </form>
+
+    </section>
+
+
+    <!-- Секция для отображения продуктов и добавления нового продукта -->
+    <section id="products">
+        <h2>Products</h2>
+
+        <form method="post" enctype="multipart/form-data" action="/addProduct">
+            <!-- Input fields for product details -->
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+
+            <label for="brand">Brand:</label><br>
+            <input type="text" id="brand" name="brand" required><br><br>
+
+            <label for="price">Price:</label><br>
+            <input type="number" id="price" name="price" step="0.01" required><br><br>
+
+            <label for="description">Description:</label><br>
+            <textarea id="description" name="description" required></textarea><br><br>
+            <label for="quantity">quantity:</label><br>
+            <textarea id="quantity" name="quantity" required></textarea><br><br>
+
+            <label for="mainImage">Main Image:</label><br>
+            <input type="file" id="mainImage" name="mainImage" required><br><br>
+
+            <label for="additionalImages1">Additional Image 1:</label><br>
+            <input type="file" id="additionalImages1" name="additionalImages1" required><br><br>
+            <label for="additionalImages2">Additional Image 2:</label><br>
+            <input type="file" id="additionalImages2" name="additionalImages2" required><br><br>
+
+            <label for="sizes">Sizes (comma separated):</label><br>
+            <input type="text" id="sizes" name="sizes" placeholder="e.g., S,M,L" required><br><br>
+
+            <label for="categoryId">Category:</label><br>
+            <select id="categoryId" name="categoryId" required>
+                <option value="">Select a category</option>
+                <!-- Populate options dynamically from server-side -->
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.title}"></option>
+            </select><br><br>
+
+            <!-- Submit button to add the product -->
+            <input type="submit" value="Add Product">
+        </form>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Size</th>
+                <th>Photo</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr th:each="product : ${products}">
+                <td><input type="checkbox" name="productId" value="${product.id}"></td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.brand}"></td>
+                <td th:text="${product.price}"></td>
+                <td>
+                    <ul>
+                        <li th:each="info : ${product.productInfo}">
+                            <span th:text="${info.descriptions}"></span>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <ul>
+                        <li th:each="info : ${product.productInfo}">
+                            <span th:text="${info.sizes}"></span>
+                        </li>
+                    </ul>
+                </td>
+                <td>
+                    <!-- Отображаем главное фото продукта -->
+                    <img th:src="@{'/images/' + ${product.id}}" th:alt="${product.name}" class="product-image">
+                </td>
+              <td>
+                  <ul>
+                      <li  th:each="info:${product.productInfo}">
+
+                          
+                      </li>
+                  </ul>
+              </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+
+    <section id="Customer" class="table-container">
+        <h2>Clients</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                     <th>CreateDate</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Street</th>
+                    <th>City</th>
+                    <th>Zip Code</th>
+                    <th>Country</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="client : ${customers}">
+                    <td th:text="${client.id}"></td>
+                    <td th:if="${customer != null}" th:text="${#temporals.format(customer.createDateCustomer, 'dd.MM.yyyy')}"></td>
+
+
+
+
+
+
+                    <td th:text="${client.firstname}"></td>
+                    <td th:text="${client.lastname}"></td>
+                    <td th:text="${client.email}"></td>
+                    <td th:text="${client.phone}"></td>
+                    <td th:text="${client.role}"></td>
+                    <td th:text="${client.street}"></td>
+                    <td th:text="${client.city}"></td>
+                    <td th:text="${client.zip}"></td>
+                    <td th:text="${client.state}"></td>
+
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
+
+
+
+</main>
+
+<footer>
+    <p>&copy; 2024 Admin Panel</p>
+</footer>
+
+<script src="/static/JS/AdminPanelSkiript.js"></script>
+</body>
