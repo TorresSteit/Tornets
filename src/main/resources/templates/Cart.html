@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="/static/css/cart.css">
+</head>
+<body>
+<div class="container">
+    <h1>Cart</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Image</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate over the productInfos in the cart -->
+        <tr th:each="productInfo : ${cart.productInfos}">
+            <!-- Display date of cart -->
+            <td th:text="${#dates.format(cart.createCart, 'dd/MM/yyyy HH:mm')}">Date</td>
+            <!-- Display product name -->
+            <td th:text="${productInfo.product.name}">Product Name</td>
+            <!-- Display product price -->
+            <td th:text="${#numbers.formatDecimal(productInfo.product.price, 2, 'COMMA', '.') + ' $'}">Price</td>
+            <!-- Display quantity of product -->
+            <td th:text="${productInfo.quantity}">Quantity</td>
+            <!-- Calculate and display total price for this product -->
+            <td th:text="${#numbers.formatDecimal(productInfo.quantity * productInfo.product.price, 2, 'COMMA', '.') + ' $'}">Total</td>
+            <!-- Display product image -->
+            <td>
+                <img class="product-image" th:src="'data:image/jpeg;base64,' + ${#strings.toBase64(productInfo.product.image)}" alt="Product Image"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<a href="/Main"><button class="cart-btn">&#128722;</button></a>
+</body>
+</html>
+
+
+
+
+

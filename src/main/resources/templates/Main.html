@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Display</title>
+    <link rel="stylesheet" href="/static/css/Main.css">
+    <!-- Добавленная ссылка на CSS-файл -->
+
+<body>
+
+<div class="container">
+    <!-- Левая часть для меню категорий -->
+    <button class="toggle-button">&#9776;</button>
+
+    <!-- Левая часть для меню категорий -->
+    <div class="category-menu">
+        <ul>
+            <li th:each="category : ${categories}">
+                <a th:href="@{'/Main/category/' + ${category.id}}" th:text="${category.title}">Category</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Правая часть для отображения продуктов -->
+    <div class="main-content">
+        <div class="user-controls">
+            <input type="text" class="search-input" placeholder="Search">
+            <button class="search-btn">&#128269;</button>
+            <a href="/logout"><button class="logout">logout</button></a>
+            <a href="/Cart"><button class="cart-btn">&#128722;</button></a>
+
+        </div>
+
+        <div class="product-display">
+            <!-- Отображение продуктов -->
+            <div th:each="product : ${products}" class="product">
+                <img th:src="@{'/images/' + ${product.id}}" th:alt="${product.name}" class="product-image">
+                <div class="details">
+                    <h2 th:text="${product.name}">Product Name</h2>
+                    <p class="price" th:text="'€' + ${product.price}">Price</p>
+
+
+                    <a th:href="@{/product/{productId}(productId=${product.id})}">Go to Product Details</a>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+    </div>
+</div>
+
+<script src="/static/JS/Main.js"></script>
+
+</body>
+</html>
+

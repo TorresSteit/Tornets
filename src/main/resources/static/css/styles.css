@@ -1,0 +1,124 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.categories-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.dark-btn {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.dark-btn:hover {
+    background-color: #555;
+}
+
+ul#categoriesList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    min-width: 150px;
+    z-index: 1;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+ul#categoriesList li {
+    padding: 10px;
+}
+
+ul#categoriesList li a {
+    color: black;
+    text-decoration: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 столбца с равной шириной */
+    gap: 20px; /* Расстояние между элементами */
+}
+
+.product {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product-image {
+    width: 100%; /* Ширина изображения равна ширине блока .product */
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+    object-fit: cover; /* Изображение заполняет блок и сохраняет пропорции */
+}
+
+
+
+.product h3 {
+    margin-top: 10px;
+    font-size: 1.2rem;
+}
+
+.product p {
+    font-size: 1rem;
+}
+
+.product input[type="number"] {
+    width: 50px;
+    padding: 5px;
+    margin: 10px 0;
+}
+
+.add-to-cart-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-to-cart-btn:hover {
+    background-color: #0056b3;
+}
+
+.user-controls {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+
+.search-input {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.search-btn, .register-btn, .login-btn, .cart-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.search-btn:hover, .register-btn:hover, .login-btn:hover, .cart-btn:hover {
+    background-color: #0056b3;
+}
+
+

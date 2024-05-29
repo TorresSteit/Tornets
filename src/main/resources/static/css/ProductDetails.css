@@ -1,0 +1,281 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.product-info {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.product-info img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.product-options {
+    margin: 20px 0;
+}
+
+.product-options label {
+    font-weight: bold;
+}
+
+.product-options select {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+.product-image img {
+    width: 45%; /* Ширина каждого изображения (половина ширины блока) */
+    height: auto;
+}
+
+/* Product Images */
+.product-images {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.main-image img {
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+}
+
+.additional-images {
+    display: flex;
+}
+
+/* Product Description */
+.product-description {
+    margin-bottom: 20px;
+}
+
+/* Product Options */
+.product-options {
+    margin-bottom: 20px;
+}
+
+/* Add to Cart Button */
+.add-to-cart-button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.add-to-cart-button:hover {
+    background-color: #0056b3;
+}
+
+/* Style for button container */
+.button-container {
+    display: inline-block; /* Make buttons horizontal */
+    margin-right: 10px; /* Add margin between buttons */
+}
+
+/* Style for size buttons */
+.size-button {
+    background-color: blue; /* Blue background color */
+    color: white; /* White text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    cursor: pointer; /* Add pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+/* Hover effect for size buttons */
+.size-button:hover {
+    background-color: darkblue; /* Darker blue background color on hover */
+}
+
+/* Reviews Section */
+.comments-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.comments-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+.review {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+.review p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.review-actions {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.likes-count {
+    margin-right: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.like-form button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.like-form button:hover {
+    background-color: #0056b3;
+}
+
+form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    font-size: 16px;
+}
+
+form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Общие стили для страницы */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+    display: flex;
+}
+
+.product-images {
+    flex: 1;
+}
+
+.product-details {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.comments-section {
+    margin-top: 20px;
+}
+
+.comments-section h2 {
+    margin-bottom: 10px;
+}
+
+.comments-section form {
+    margin-bottom: 20px;
+}
+
+.review {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+.customer-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.review-comment {
+    margin-bottom: 10px;
+}
+
+.review-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.likes {
+    display: flex;
+    align-items: center;
+}
+
+.like-form {
+    margin-left: 10px;
+}

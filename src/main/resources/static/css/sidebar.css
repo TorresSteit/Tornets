@@ -1,0 +1,42 @@
+.sidebar {
+    width: 200px;
+    height: 100%;
+    background-color: #f0f0f0;
+    position: fixed;
+    top: 0;
+    left: -200px; /* Начинаем со свернутого меню */
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+.sidebar.open {
+    left: 0; /* Выдвигаем меню при нажатии на кнопку */
+}
+
+#toggleButton {
+    display: block;
+    width: 100%;
+    background-color: #ccc;
+    border: none;
+    outline: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#categories {
+    list-style-type: none;
+    padding: 0;
+}
+
+#categories li {
+    padding: 10px;
+}
+
+#categories li a {
+    text-decoration: none;
+    color: #333;
+}
+
+#categories li a:hover {
+    color: #000;
+}
