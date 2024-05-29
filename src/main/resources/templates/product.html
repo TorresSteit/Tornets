@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="/static/css/ProductDetails.css">
+</head>
+<body>
+<div class="product-details" th:if="${product != null}">
+    <div class="product-images">
+        <!-- Displaying main product image -->
+        <img id="mainImage" th:src="@{'data:image/jpeg;base64,' + ${product.image}}" alt="Product Image">
+
+    </div>
+    <div class="product-info">
+        <!-- Product name -->
+        <h1 th:text="${product.name}">Product Name</h1>
+
+        <!-- Brand -->
+        <p><strong>Brand:</strong> <span th:text="${product.brand}">Brand</span></p>
+
+        <!-- Product description -->
+        <div th:if="${productInfoList != null}">
+            <p th:each="description : ${#strings.arraySplit(productInfoList.get(0).descriptions, ',')}" th:text="${description}">Description</p>
+        </div>
+
+        <!-- Quantity (Size count) -->
+        <p>
+            <strong>Quantity:</strong>
+            <span th:if="${productInfoList != null}" th:text="${#lists.size(productInfoList)}">Quantity</span>
+            <span th:unless="${productInfoList != null}">N/A</span>
+        </p>
+
+        <!-- Sizes -->
+        <select th:if="${productInfoList != null}">
+            <option th:each="size : ${productInfoList.get(0).sizes}" th:value="${size}" th:text="${size}">Size</option>
+        </select>
+
+        <select th:if="${productInfoList != null}">
+            <option th:each="color : ${productInfoList.get(0).colors}" th:value="${color}" th:text="${color}">Color</option>
+        </select>
+
+        <!-- Add to Cart form -->
+        <form th:action="@{/cart/add}" method="post">
+            <input type="hidden" name="productId" th:value="${product.id}" />
+            <button type="submit" class="add-to-cart-button">Add to Cart</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="/static/css/Order.css">
+</head>
+<body>
+<h1>Orders</h1>
+<table id="ordersTable">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Products</th>
+        <th>Total</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Thymeleaf iteration over orders -->
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.date}">Date</td>
+        <td>
+            <!-- Thymeleaf iteration over products in the order -->
+            <ul>
+                <li th:each="product : ${order.products}">
+                    <img th:src="${product.Byte}" alt="Product Image" width="50">
+                    <p th:text="${product.name}">Product Name</p>
+                    <p th:text="'Price: $' + ${product.price}">Price: $10.00</p>
+                    <p th:text="'Size: ' + ${product.size}">Size: M</p>
+                </li>
+            </ul>
+        </td>
+        <td th:text="${order.total}">Total</td>
+        <td>
+            <button class="cancel-btn" onclick="cancelOrder()">❌</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form th:action="@{/Save}" method="post">
+    <!-- Other form elements -->
+
+    <label for="paymentMethod">Choose Payment Method:</label>
+    <select id="paymentMethod" name="paymentMethod">
+        <option value="CASH">Cash</option>
+        <option value="CREDIT_CARD">Credit Card</option>
+        <option value="DEBIT_CARD">Debit Card</option>
+        <option value="PAYPAL">PayPal</option>
+        <option value="BANK_TRANSFER">Bank Transfer</option>
+    </select>
+
+    <!-- Other form elements -->
+
+    <button type="submit">Submit</button>
+</form>
+
+
+<div class="actions">
+    <button class="save-btn">Save Order</button>
+    <button class="discard-btn">Discard Order</button>
+</div>
+
+
+</body>
+</html>
+
+
+

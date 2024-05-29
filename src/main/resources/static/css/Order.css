@@ -1,0 +1,72 @@
+/* Общие стили для таблицы */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+/* Стили для заголовков таблицы */
+th {
+    background-color: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Стили для ячеек таблицы */
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Стили для изображений товаров */
+img {
+    max-width: 50px;
+    height: auto;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Стили для списков продуктов внутри ячейки */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Стили для элементов списка */
+li {
+    margin-bottom: 5px;
+}
+
+/* Стили для кнопок действий */
+.actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.actions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.actions button:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn {
+    background-color: transparent;
+    color: #ff0000;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    color: #d40000;
+}

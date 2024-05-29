@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+</head>
+<body>
+<h1>Welcome to our store!</h1>
+
+<div th:if="${cart != null}">
+    <h2>Cart</h2>
+    <p th:text="'Payment Method: ' + ${cart.paymentMethod.displayName}"></p>
+    <p th:text="'Total Price: $' + ${cart.totalPrice}"></p>
+
+    <h3>Products:</h3>
+    <ul>
+        <li th:each="item : ${cart.productMap}">
+            <span th:text="${item.key.name}"></span> <!-- Assuming Product has a 'name' property -->
+            <span th:text="'Quantity: ' + ${item.value}"></span>
+        </li>
+    </ul>
+</div>
+
+<!-- Add more content as needed -->
+</body>
+</html>
+т
