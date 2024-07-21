@@ -55,17 +55,6 @@ li {
     margin-bottom: 5px;
 }
 
-/* Стили для контейнера таблицы */
-.table-container {
-    margin-top: 20px;
-
-}
-/* Скрываем все секции, кроме той, на которую указывает URI-цель */
-section:not(:target) {
-    display: none;
-}
-
-
 /* Стили для таблицы */
 .table {
     width: 100%;
@@ -96,27 +85,24 @@ section:not(:target) {
     background-color: #f5f5f5;
 }
 
-/* Скрываем разделы категорий и продуктов в других секциях */
+/* Стили для контейнера таблицы */
+.table-container {
+    margin-top: 20px;
+}
+
 /* Скрываем все секции, кроме той, на которую указывает URI-цель */
 section:not(:target) {
     display: none;
 }
 
-/* Отображаем секцию клиентов по умолчанию */
-#Customer {
+/* Отображаем секцию категорий по умолчанию */
+#categories {
     display: block;
 }
 
-/* Стилизация таблицы */
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+.product-image {
+    max-width: 100px; /* Ширина изображения будет не более 100 пикселей */
+    height: auto; /* Сохранение пропорций изображения */
 }
 
 /* Стилизация главного изображения */
@@ -139,10 +125,20 @@ th, td {
     margin-bottom: 5px;
     object-fit: cover;
 }
-.product-image {
-    max-width: 100px; /* Ширина изображения будет не более 100 пикселей */
-    height: auto; /* Сохранение пропорций изображения */
+/* Вставьте этот CSS код в ваш файл стилей */
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 16px;
+    line-height: 0;
 }
 
+.delete-btn:hover {
+    background-color: darkred;
+}
 
 

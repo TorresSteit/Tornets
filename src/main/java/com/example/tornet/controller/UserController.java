@@ -2,7 +2,7 @@ package com.example.tornet.controller;
 
 import com.example.tornet.configuration.UserDetailsServiceImpl;
 import com.example.tornet.exception.CustomerNotFoundException;
-import com.example.tornet.model.Cart;
+
 import com.example.tornet.model.Customer;
 import com.example.tornet.model.Role;
 import com.example.tornet.service.CartService;
@@ -10,8 +10,9 @@ import com.example.tornet.service.CustomerService;
 import com.example.tornet.service.EmailSenderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -19,7 +20,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Date;
 
 @Controller
 @Slf4j
@@ -40,7 +40,8 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
     private final CartService cartService;
-    private  final EmailSenderService emailSenderService;
+    private final EmailSenderService emailSenderService;
+
 
     @GetMapping("/")
     public String index() {
@@ -61,41 +62,51 @@ public class UserController {
 
     @PostMapping("/registration")
     public String registerUser(@ModelAttribute("customer") Customer customer, BindingResult customerResult,
-                               Model model) {
-
-        // Check for validation errors
-        if (customerResult.hasErrors()) {
-            log.error("Validation errors occurred during user registration.");
-            return "registration";
-        }
-
-        // Check if a customer with the same email exists
+                               BindingResult addressResult, Model model) {
         try {
-            customerService.findCustomerByEmail(customer.getEmail());
-            log.error("Email already exists during user registration.");
-            customerResult.rejectValue("email", null, "Email already exists");
-            return "registration";
-        } catch (CustomerNotFoundException e) {
-            // Email is not found, so it's safe to proceed with registration
-        }
+            if (customerResult.hasErrors() || addressResult.hasErrors()) {
+                log.error("Validation errors occurred during user registration.");
+                return "registration";
+            }
 
-        customer.setRole(Role.Users); // Set the user's role
-        if (customerService.save(customer)) {
-            // Authenticate the user
-            UserDetails userDetails = userDetailsService.loadUserByUsername(customer.getEmail());
-            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Check if a customer with the same email exists
+            if (customerService.findCustomerByEmail(customer.getEmail()) != null) {
+                log.error("Email already exists during user registration.");
+                customerResult.rejectValue("email", null, "Email already exists");
+                return "registration";
+            }
 
-            return "redirect:/Main";
-        } else {
+            customer.setRole(Role.Users);
+            customer.setCreateDateCustomer(new Date());
+            if (customerService.save(customer)) {
+
+                UserDetails userDetails = userDetailsService.loadUserByUsername(customer.getEmail());
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                return "redirect:/Main";
+            } else {
+                log.error("Failed to save the customer during registration.");
+                return "registration";
+            }
+        } catch (Exception e) {
+            log.error("An error occurred during registration", e);
+            model.addAttribute("error", true);
+            model.addAttribute("message", "An unexpected error occurred");
             return "registration";
         }
     }
 
 
+
+
+
+
     @PostMapping("/login")
-    public String login(@RequestParam String email, @RequestParam String password, HttpServletRequest request, Model model) {
-        // Check for empty email
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        HttpServletRequest request,
+                        Model model) {
         if (email == null || email.isEmpty()) {
             model.addAttribute("error", true);
             model.addAttribute("message", "Please enter a valid email address");
@@ -103,21 +114,15 @@ public class UserController {
         }
 
         try {
-            // Retrieve the customer by email
             Customer customer = customerService.findCustomerByEmail(email);
 
-            // Authenticate the user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            User authenticatedUser = (User) authentication.getPrincipal();
 
-            // Send email notification
-            emailSenderService.sendEmail(email, "Login Notification", "You have successfully logged in.");
-            log.error(email + " has been logged in.");
-
-            // Redirect based on role
-            if (customer.getRole() == Role.Admin) {
-                return "redirect:/AdminPanel";
+            if (isAdmin(authenticatedUser)) {
+                return "redirect:/Admin";
             } else {
                 return "redirect:/Main";
             }
@@ -129,20 +134,46 @@ public class UserController {
             model.addAttribute("error", true);
             model.addAttribute("message", "Invalid email or password");
             return "login";
+        } catch (Exception e) {
+            model.addAttribute("error", true);
+            model.addAttribute("message", "An unexpected error occurred");
+            return "login";
         }
     }
+
+
+
+    @GetMapping("/unauthorized")
+    public String unauthorized(Model model) {
+        User user = getCurrentUser();
+        model.addAttribute("login", user.getUsername());
+        return "unauthorized";
+    }
+
+    private User getCurrentUser() {
+        return (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
     private boolean isAdmin(User user) {
         Collection<GrantedAuthority> roles = user.getAuthorities();
 
         for (GrantedAuthority auth : roles) {
-            if ("ADMIN".equals(auth.getAuthority()))
+            if ("ROLE_ADMIN".equals(auth.getAuthority()))
                 return true;
         }
 
         return false;
     }
 
+
+
+
+
 }
+
 
 
 

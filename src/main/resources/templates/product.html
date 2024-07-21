@@ -1,40 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Product Details</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
     <link rel="stylesheet" href="/static/css/ProductDetails.css">
 </head>
 <body>
+<div class="container">
+    <h2>Customer Information</h2>
+    <p>Email: <span th:text="${customer != null ? customer.email : 'No email available'}">No email available</span></p>
+    <p>First Name: <span th:text="${customer != null ? customer.firstname : 'No first name available'}">No first name available</span></p>
+</div>
 
 <div class="product-info">
-    <!-- Product Image -->
     <div class="product-images">
         <div class="main-image">
             <img th:src="'data:image/jpeg;base64,' + ${encodedImage}" th:alt="${product.name}" alt="Product Image"/>
         </div>
         <div class="additional-images" th:if="${productInfoList != null and not #lists.isEmpty(productInfoList)}">
-            <!-- Additional Images -->
             <div class="additional-image">
                 <img th:src="@{'/additionalPhoto1/' + ${productInfoList[0].id}}" th:alt="${product.name}" alt="Additional Product Image1"/>
             </div>
             <div class="additional-image">
-                <img th:src="@{'/additionalPhoto2/' + ${productInfoList[0].id}}" th:alt="${product.name}" alt="Additional Product Image2"/>
+                <img th:src="@{'/additionalPhoto2/' + ${productInfoList[1].id}}" th:alt="${product.name}" alt="Additional Product Image2"/>
             </div>
         </div>
     </div>
 
-    <!-- Product Details -->
     <div class="product-details">
-        <!-- Product Name -->
         <h1 th:text="${product.name}">Product Name</h1>
-        <h2 th:text="'€'+${product.price}">Product Price</h2>
+        <h2 th:text="'€' + ${product.price}">Product Price</h2>
 
-        <!-- Brand -->
-        <p><strong>Brand:</strong> <span th:text="${product.brand}">Brand</span></p>
-
-        <!-- Product Description -->
         <div class="product-description" th:if="${productInfoList != null and not #lists.isEmpty(productInfoList)}">
             <h2>Description</h2>
             <p th:text="${productInfoList[0].descriptions}">Description here</p>
@@ -42,75 +39,78 @@
     </div>
 </div>
 
-<div class="product-options" th:if="${productInfoList != null and not #lists.isEmpty(productInfoList)}">
-    <form th:action="@{/add_to_cart}" method="post">
-        <input type="hidden" id="productId" name="productId" th:value="${product.id}" />
-        <input type="hidden" id="selectedSizeInput" name="selectedSize" value="" />
-        <input type="hidden" name="quantity" value="1" />
-        <button type="submit" class="add-to-cart-button">Add to Cart</button>
-    </form>
-</div>
 
-<div class="comments-section">
-    <h2>Reviews</h2>
-
-    <!-- Форма для добавления нового отзыва -->
-    <form th:action="@{/addReview}" method="post">
-        <input type="hidden" name="product.id" th:value="${product.id}" />
-        <textarea name="comments" placeholder="Write your review here..." required></textarea>
-
-        <!-- Выбор звездной оценки -->
-        <div class="rating">
-            <label for="rating">Rating:</label>
-            <select id="rating" name="rating">
-                <option value="1">1 star</option>
-                <option value="2">2 stars</option>
-                <option value="3">3 stars</option>
-                <option value="4">4 stars</option>
-                <option value="5">5 stars</option>
-            </select>
-            <!-- Отображение звезд для интерактивной оценки -->
-            <div class="stars" data-rating="0">
-                <i class="fas fa-star" data-index="1"></i>
-                <i class="fas fa-star" data-index="2"></i>
-                <i class="fas fa-star" data-index="3"></i>
-                <i class="fas fa-star" data-index="4"></i>
-                <i class="fas fa-star" data-index="5"></i>
-            </div>
-        </div>
-
-        <button type="submit">Submit Review</button>
-    </form>
-
-    <!-- Список отзывов -->
-    <div th:each="review : ${reviews}" class="review">
-        <p class="customer-name" th:text="${review.customer.email}">Customer Email</p>
-        <p class="review-comment" th:text="${review.comments}">Review Comments</p>
-        <p class="review-date" th:text="${#dates.format(review.createDate, 'yyyy-MM-dd')}">Review Date</p>
-
-        <!-- Оценка и лайки -->
-        <div class="review-actions">
-            <div class="rating">
-                <div class="stars" th:attr="data-rating=${review.rating}">
-                    <i class="fas fa-star" th:each="star : ${#numbers.sequence(1, review.rating)}">&#9733;</i>
-                    <i class="far fa-star" th:each="star : ${#numbers.sequence(review.rating + 1, 5)}">&#9733;</i>
-                </div>
-            </div>
-
-            <div class="likes">
-                <span class="likes-count" th:text="'Likes: ' + ${review.likes}">Likes: 0</span>
-                <!-- Форма для лайка отзыва -->
-                <form th:action="@{/likeReview}" method="post" class="like-form">
-                    <input type="hidden" name="reviewId" th:value="${review.id}" />
-                    <button type="submit">Like</button>
-                </form>
+<div class="product-options">
+    <label>Select Size:</label>
+    <div class="size-buttons">
+        <div th:each="productInfo : ${product.productInfo}">
+            <div th:each="size : ${productInfo.sizes}">
+                <button type="button" class="size-button" th:attr="data-size=${size}" th:text="${size}"></button>
             </div>
         </div>
     </div>
 </div>
 
+<form action="/cart/add" method="post" id="addToCartForm">
+    <input type="hidden" name="productId" th:value="${product.id}">
+    <input type="hidden" name="selectedSize" id="selectedSizeInput" value="">
+    <input type="number" name="quantity" value="1" min="1">
+    <button type="submit">Add to Cart</button>
+</form>
+
+<div>
+    Selected Size: <span id="selectedSize">--</span>
+</div>
+<div class="back-to-home">
+    <button onclick="window.location.href='/Main'" class="home-button">Home</button>
+</div>
+
+
+
+<div class="comments-section">
+    <h2>Reviews</h2>
+
+    <form class="review-form" th:action="@{/addReview}" method="post">
+        <input type="hidden" name="product.id" th:value="${product.id}">
+        <textarea name="comments" placeholder="Write your review here..." required></textarea>
+        <div class="star-rating">
+            <input type="radio" name="rating" value="5" id="5" required><label for="5">★</label>
+            <input type="radio" name="rating" value="4" id="4"><label for="4">★</label>
+            <input type="radio" name="rating" value="3" id="3"><label for="3">★</label>
+            <input type="radio" name="rating" value="2" id="2"><label for="2">★</label>
+            <input type="radio" name="rating" value="1" id="1"><label for="1">★</label>
+        </div>
+        <button type="submit" class="submit-review">Submit Review</button>
+    </form>
+
+    <div th:each="review : ${reviews}" class="review">
+        <div th:if="${review.customer != null}">
+            <p th:text="${review.customer.email}">Customer Email</p>
+        </div>
+        <div th:unless="${review.customer != null}">
+            <p>Customer Email not available</p>
+        </div>
+        <div th:if="${review.commets != null}">
+            <p th:text="${review.commets}">Review Comments</p>
+        </div>
+        <div th:unless="${review.commets != null}">
+            <p>No Comments</p>
+        </div>
+        <p class="review-date" th:text="${#dates.format(review.createComments, 'yyyy-MM-dd')}">Review Date</p>
+        <button type="button" class="like-button" th:attr="data-review-id=${review.id}" onclick="likeReview(${review.id})">
+            Like (<span th:text="${review.likes}">0</span>)
+        </button>
+    </div>
+</div>
+
+
+
+
 <script src="/static/JS/ProductDetails.js"></script>
+
+
 </body>
 </html>
+
 
 

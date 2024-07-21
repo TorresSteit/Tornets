@@ -6,14 +6,12 @@
     <title>Product Display</title>
     <link rel="stylesheet" href="/static/css/Main.css">
     <!-- Добавленная ссылка на CSS-файл -->
-
+</head>
 <body>
-
 <div class="container">
     <!-- Левая часть для меню категорий -->
     <button class="toggle-button">&#9776;</button>
 
-    <!-- Левая часть для меню категорий -->
     <div class="category-menu">
         <ul>
             <li th:each="category : ${categories}">
@@ -22,14 +20,19 @@
         </ul>
     </div>
 
-    <!-- Правая часть для отображения продуктов -->
     <div class="main-content">
         <div class="user-controls">
             <input type="text" class="search-input" placeholder="Search">
             <button class="search-btn">&#128269;</button>
-            <a href="/logout"><button class="logout">logout</button></a>
+            <a href="/logout"><button class="logout">Logout</button></a>
             <a href="/Cart"><button class="cart-btn">&#128722;</button></a>
+            <div class="user-menu">
+                <button class="user-btn" id="userBtn">&#128100;</button>
+                <div class="dropdown-content" id="userDropdown">
+                    <a href="/Orders-All">View Orders</a>
 
+                </div>
+            </div>
         </div>
 
         <div class="product-display">
@@ -39,23 +42,35 @@
                 <div class="details">
                     <h2 th:text="${product.name}">Product Name</h2>
                     <p class="price" th:text="'€' + ${product.price}">Price</p>
-
-
-                    <a th:href="@{/product/{productId}(productId=${product.id})}">Go to Product Details</a>
+                    <a class="product-details-link" th:href="@{/product/{productId}(productId=${product.id})}">Go to Product Details</a>
                 </div>
             </div>
         </div>
-
-
-
-
-
-
     </div>
+</div>
+<div th:if="${totalPages > 1}" class="pagination-bottom">
+    <ul class="pagination">
+        <li th:class="${currentPage == 0} ? 'disabled' : ''">
+            <a th:href="@{/Main(page=0)}">&laquo;</a>
+        </li>
+        <li th:class="${currentPage == 0} ? 'disabled' : ''">
+            <a th:href="@{/Main(page=${currentPage - 1})}">&lt;</a>
+        </li>
+        <li th:each="page, status : ${#numbers.sequence(0, totalPages - 1)}" th:class="${currentPage == status.index} ? 'active' : ''">
+            <a th:href="@{/Main(page=${status.index})}" th:text="${status.index + 1}"></a>
+        </li>
+        <li th:class="${currentPage == totalPages - 1} ? 'disabled' : ''">
+            <a th:href="@{/Main(page=${currentPage + 1})}">&gt;</a>
+        </li>
+        <li th:class="${currentPage == totalPages - 1} ? 'disabled' : ''">
+            <a th:href="@{/Main(page=${totalPages - 1})}">&raquo;</a>
+        </li>
+    </ul>
 </div>
 
 <script src="/static/JS/Main.js"></script>
 
 </body>
 </html>
+
 

@@ -7,9 +7,7 @@ package com.example.tornet.exception;
             super(message);
         }
 
-        public CategoryNotFoundException(String message, Throwable cause) {
-            super(message, cause);
-        }
+
     }
 
 

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,14 +15,18 @@ import java.util.List;
 public class ReviewService {
 private final ReviewRepository reviewRepository;
 
-public List<Review> getAllReviews() {
-    return reviewRepository.findAll();
-}
-public  void  addReview(Review review) {
-     reviewRepository.save(review);
-}
+    public void addReview(Review review) {
+        reviewRepository.save(review);
+    }
+
     public List<Review> getReviewsByProductId(Long productId) {
         return reviewRepository.findByProductId(productId);
     }
 
+    public Review getReviewByProductId(Long productId) {
+        return reviewRepository.findByProductId(productId).stream().findFirst().orElse(null);
+    }
+    public void updateReview(Review review) {
+        reviewRepository.save(review);
+    }
 }

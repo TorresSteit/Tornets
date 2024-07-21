@@ -10,11 +10,14 @@ import com.example.tornet.reposotory.ProductRepostory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +28,12 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final ProductRepostory productRepostory;
     private final ProductInfoRepository productInfoRepository;
+
+
+
+
+
+
 
     public List<Category> getAllCategoriesWithProducts() {
         List<Category> categories = categoryRepository.findAll();
@@ -41,12 +50,7 @@ public class ProductService {
         return categoryRepository.findAll();
     }
 
-    public void addCategory(String categoryTitle) {
-        Category category = new Category();
-        category.setTitle(categoryTitle);
-        categoryRepository.save(category);
-        log.info("Category added");
-    }
+
 
     public Category getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId).orElse(null);
@@ -93,14 +97,28 @@ public class ProductService {
     public List<Product> findAll() {
         return productRepostory.findAll();
     }
+
+
     @Transactional
-    public void deleteProduct(Long id) {
-        Optional<Product> productOptional = productRepostory.findById(id);
-        productOptional.ifPresent(product -> productRepostory.delete(product));
+    public void deleteProductById(Long id) {
+        Optional<Product> product = productRepostory.findById(id);
+        if (product.isPresent()) {
+            log.info("Удаление продукта с ID: {}", id);
+            productRepostory.delete(product.get());
+        } else {
+            log.warn("Продукт с ID {} не найден", id);
+            throw new ResourceNotFoundException("Продукт с ID " + id + " не найден");
+        }
     }
+
+
     @Transactional
     public void updateProduct(Product product) {
         productRepostory.save(product);
     }
 
+
+    public Page<Product> getProductsPage(Pageable pageable) {
+        return productRepostory.findAll(pageable);
+    }
 }

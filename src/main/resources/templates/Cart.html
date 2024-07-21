@@ -1,51 +1,86 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart</title>
     <link rel="stylesheet" href="/static/css/cart.css">
 </head>
 <body>
-<div class="container">
-    <h1>Cart</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>Date</th>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Image</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Iterate over the productInfos in the cart -->
-        <tr th:each="productInfo : ${cart.productInfos}">
-            <!-- Display date of cart -->
-            <td th:text="${#dates.format(cart.createCart, 'dd/MM/yyyy HH:mm')}">Date</td>
-            <!-- Display product name -->
-            <td th:text="${productInfo.product.name}">Product Name</td>
-            <!-- Display product price -->
-            <td th:text="${#numbers.formatDecimal(productInfo.product.price, 2, 'COMMA', '.') + ' $'}">Price</td>
-            <!-- Display quantity of product -->
-            <td th:text="${productInfo.quantity}">Quantity</td>
-            <!-- Calculate and display total price for this product -->
-            <td th:text="${#numbers.formatDecimal(productInfo.quantity * productInfo.product.price, 2, 'COMMA', '.') + ' $'}">Total</td>
-            <!-- Display product image -->
-            <td>
-                <img class="product-image" th:src="'data:image/jpeg;base64,' + ${#strings.toBase64(productInfo.product.image)}" alt="Product Image"/>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+
+
+<a href="/Main" class="main-page-link">Return to Main Page</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Product Name</th>
+        <th>Price</th>
+        <th>Sizes</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Image</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${cart != null and not #lists.isEmpty(cart.productInfos)}" th:each="productInfo : ${cart.productInfos}">
+        <td>
+            <span th:text="${#dates.format(cart.createCart, 'dd/MM/yyyy HH:mm')}">Date</span>
+        </td>
+        <td th:text="${productInfo.product.name}">Product Name</td>
+        <td th:text="${productInfo.product.price != null ? #numbers.formatDecimal(productInfo.product.price, 3, 2) : ''}"></td>
+        <td th:each="size : ${productInfo.sizes}" th:text="${size}">Size</td>
+        <td th:text="${productInfo.quantity}">Quantity</td>
+        <td th:text="${productInfo.cart.totalPrice != null ? #numbers.formatDecimal(productInfo.cart.totalPrice, 3, 2) : ''}">Total</td>
+        <td>
+            <img th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
+        </td>
+        <td>
+            <form th:action="@{/Cart/delete/{productId}(productId=${productInfo.product.id})}" method="post">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="email" th:value="${cart.customer.email != null ? cart.customer.email : ''}">
+                <button type="submit" class="red-button">Delete</button>
+            </form>
+        </td>
+    </tr>
+    <tr th:if="${cart == null or #lists.isEmpty(cart.productInfos)}">
+        <td colspan="8">Your cart is empty</td>
+    </tr>
+    </tbody>
+</table>
+<div class="total-price">
+    <span>Total Price: </span><span th:text="${cart.totalPrice}"></span>
 </div>
-<a href="/Main"><button class="cart-btn">&#128722;</button></a>
+
+<!-- Form for creating an order -->
+<form th:action="@{/Order/create}" method="post">
+    <input type="hidden" name="email" th:value="${cart.customer.email}">
+    <button type="submit" class="checkout-button">Checkout</button>
+</form>
+
+<!-- Pagination (if needed) -->
+<div th:if="${productInfoPage.totalPages > 1}" class="pagination-bottom">
+    <ul class="pagination">
+        <li th:class="${productInfoPage.first} ? 'disabled' : ''">
+            <a th:href="@{/Cart(page=0)}">&laquo;</a>
+        </li>
+        <li th:class="${productInfoPage.first} ? 'disabled' : ''">
+            <a th:href="@{/Cart(page=${productInfoPage.number - 1})}">&lt;</a>
+        </li>
+        <li th:each="pageNumber : ${#numbers.sequence(0, productInfoPage.totalPages - 1)}"
+            th:class="${productInfoPage.number == pageNumber} ? 'active' : ''">
+            <a th:href="@{/Cart(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+        </li>
+        <li th:class="${productInfoPage.last} ? 'disabled' : ''">
+            <a th:href="@{/Cart(page=${productInfoPage.number + 1})}">&gt;</a>
+        </li>
+        <li th:class="${productInfoPage.last} ? 'disabled' : ''">
+            <a th:href="@{/Cart(page=${productInfoPage.totalPages - 1})}">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
 </body>
 </html>
-
-
-
 
 

@@ -32,18 +32,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        log.debug("Attempting to load user by email: {}", email);
-        Customer customer = null;
-        try {
-            customer = customerService.findCustomerByEmail(email);
-        } catch (CustomerNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        Customer customer = customerService.findCustomerByEmail(email);
         if (customer == null) {
             throw new UsernameNotFoundException("Customer with email " + email + " not found");
         }
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(customer.getRole().toString()));
+        List<GrantedAuthority> roles = Arrays.asList(
+                new SimpleGrantedAuthority(customer.getRole().toString())
+        );
+
         return new User(customer.getEmail(), customer.getPassword(), roles);
     }
 }

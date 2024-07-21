@@ -6,7 +6,7 @@ import com.example.tornet.model.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CustomerTest {
+public class   CustomerTest {
 
     @Test
     public void testCustomerConstructor() {
@@ -20,7 +20,7 @@ public class CustomerTest {
         customer.setId(1L);
         customer.setFirstname("John");
         customer.setLastname("Doe");
-        customer.setLogin("johndoe");
+
         customer.setPhone("123456789");
         customer.setPassword("password");
         customer.setEmail("john.doe@example.com");
@@ -34,7 +34,7 @@ public class CustomerTest {
         Assertions.assertEquals(1L, customer.getId());
         Assertions.assertEquals("John", customer.getFirstname());
         Assertions.assertEquals("Doe", customer.getLastname());
-        Assertions.assertEquals("johndoe", customer.getLogin());
+
         Assertions.assertEquals("123456789", customer.getPhone());
         Assertions.assertEquals("password", customer.getPassword());
         Assertions.assertEquals("john.doe@example.com", customer.getEmail());
@@ -42,6 +42,6 @@ public class CustomerTest {
 
     }
 
-    // Другие тесты для методов класса Customer
+
 }
 

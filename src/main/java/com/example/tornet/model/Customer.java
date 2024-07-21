@@ -26,7 +26,7 @@ public class Customer {
     private  String  lastname;
 
 
-    private  String  login;
+
 
     private String  phone;
 
@@ -56,6 +56,7 @@ public class Customer {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery")
     private  Delivery delivery;
+
 
 
 

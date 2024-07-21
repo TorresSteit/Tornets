@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/mailSender.css">
+</head>
+<body>
+<div class="container">
+    <h1>Order Confirmation</h1>
+    <p>Order Number: <span th:text="${orderNumber}"></span></p>
+    <p>Order Date: <span th:text="${orderDate}"></span></p>
+    <p th:if="${order}">Order Status: <span th:text="${order.deliveryStatus}"></span></p>
+
+
+
+    <p th:if="${order}">Order Pay: <span th:text="${order.paymentMethod}"></span></p>
+
+
+
+
+    <h2>Products</h2>
+    <ul class="product-list">
+        <li th:each="product : ${products}" class="product-item">
+            <img th:src="@{cid:product__${product.id}}" alt="Product Image"/>
+            <p th:text="${product.name}"></p>
+            <p th:text="${product.price}"></p>
+
+
+
+        </li>
+    </ul>
+</div>
+</body>
+</html>
+
+
+
+
+

@@ -19,26 +19,28 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-@Enumerated(EnumType.STRING)
-   private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
+
     private BigDecimal totalPrice;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createCart;
 
-
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductInfo> productInfos = new ArrayList<>();
 
+    @OneToMany(mappedBy ="cart", cascade = CascadeType.ALL, orphanRemoval = true )
+    private List<Product> products = new ArrayList<>();
 
 }
+

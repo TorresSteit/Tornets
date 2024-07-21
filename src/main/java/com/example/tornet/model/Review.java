@@ -27,10 +27,12 @@ public class Review {
     private Customer customer;
 
     private String  commets;
-@Temporal(TemporalType.DATE)
-    private Date create_coments;
+    @Temporal(TemporalType.DATE)
+    private Date createComments;
     private int likes;
-
+    public void setCreateComments(Date createComments) {
+        this.createComments = createComments;
+    }
 
     public void likes(){
         if (likes<=5){

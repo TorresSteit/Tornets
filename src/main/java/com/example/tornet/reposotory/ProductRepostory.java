@@ -17,7 +17,7 @@ public interface ProductRepostory extends JpaRepository<Product, Long> {
     Product findByName(String name);
 
     // Найти продукт по его бренду
-    List<Product> findByBrand(String brand);
+
 
     // Найти продукты по категории
     List<Product> findByCategory(Category category);
@@ -31,9 +31,12 @@ public interface ProductRepostory extends JpaRepository<Product, Long> {
     List<Product> findByCategoryId(Long categoryId);
 
     Optional<Product> findById(Long id);
+    
 
     @Query("SELECT p FROM Product p LEFT JOIN FETCH p.productInfo WHERE p.id = :id")
     Product findByIdWithProductInfo(@Param("id") Long id);
+    boolean existsById(Long id);
+    void deleteById(Long id);
 
 
 }

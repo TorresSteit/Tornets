@@ -1,72 +1,121 @@
-/* Общие стили для таблицы */
+body {
+    background-color: #fff;
+    color: #000;
+}
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
 }
-
-/* Стили для заголовков таблицы */
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 th {
     background-color: #f2f2f2;
-    padding: 12px;
-    text-align: left;
-    border-bottom: 2px solid #ddd;
+    color: #000;
 }
-
-/* Стили для ячеек таблицы */
-td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
 }
-
-/* Стили для изображений товаров */
-img {
-    max-width: 50px;
-    height: auto;
-    display: block;
-    margin-bottom: 5px;
+.red-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
-
-/* Стили для списков продуктов внутри ячейки */
-ul {
+.red-button:hover {
+    background-color: #d32f2f;
+}
+.checkout-button {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.checkout-button:hover {
+    background-color: #333;
+}
+.total-price {
+    margin-top: 20px;
+    font-size: 1.2em;
+    text-align: right;
+}
+.pagination {
     list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 0;
+}
+
+.pagination-bottom {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: inline-block;
+    padding-left: 0;
     margin: 0;
 }
 
-/* Стили для элементов списка */
-li {
-    margin-bottom: 5px;
+.pagination li {
+    display: inline;
+    margin-right: 5px;
 }
 
-/* Стили для кнопок действий */
-.actions {
-    margin-top: 20px;
-    text-align: center;
+.pagination li a {
+    color: #337ab7;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+    text-decoration: none;
+    background-color: #ffffff; /* Added background color */
+    border: 1px solid #dddddd; /* Added border */
+    border-radius: 3px; /* Added border-radius */
+    transition: background-color 0.3s, color 0.3s; /* Added transition for smooth hover effect */
 }
 
-.actions button {
-    margin: 0 10px;
+.pagination li a:hover:not(.active) {
+    background-color: #dddddd; /* Background color change on hover */
+    color: #337ab7; /* Text color change on hover */
+}
+
+.pagination li.disabled a {
+    color: #777777;
+    cursor: not-allowed;
+    background-color: #f9f9f9; /* Added background color for disabled state */
+    border: 1px solid #dddddd; /* Added border for disabled state */
+}
+
+.pagination li.active a {
+    background-color: #337ab7;
+    color: #ffffff;
+    border-radius: 3px;
+    border: 1px solid #337ab7; /* Added border for active state */
+}
+
+.black-button {
+    background-color: black;
+    color: white;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: #fff;
     cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
 }
-
-.actions button:hover {
-    background-color: #0056b3;
-}
-
-.cancel-btn {
-    background-color: transparent;
-    color: #ff0000;
-    font-size: 18px;
-    border: none;
-    cursor: pointer;
-}
-
-.cancel-btn:hover {
-    color: #d40000;
+a.main-page-link {
+    color: #000;
+    text-decoration: none;
+    display: block;
+    margin: 20px 0;
+    font-size: 1.2em;
 }

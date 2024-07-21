@@ -1,14 +1,15 @@
 package com.example.tornet.model;
 
 
-import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serializable;
 
-;public enum  Role {
+
+public enum  Role {
     Admin, Users;
 
 
+
+    @Override
     public String toString() {
         return "ROLE_" + name();
     }

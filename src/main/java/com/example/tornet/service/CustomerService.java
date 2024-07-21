@@ -1,10 +1,15 @@
 package com.example.tornet.service;
 
+import com.example.tornet.configuration.UserDetailsServiceImpl;
 import com.example.tornet.exception.CustomerNotFoundException;
 import com.example.tornet.model.Customer;
+import com.example.tornet.model.Role;
 import com.example.tornet.reposotory.CustomerRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,17 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
+@Service
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<Customer> getCustomerRepository() {
-        return customerRepository.findAll();
-    }
 
     @Transactional
     public boolean save(Customer customer) {
@@ -39,17 +41,20 @@ public class CustomerService {
 
         return true;
     }
+
     public Customer findCustomerByEmail(String email) {
         log.debug("Searching for customer with email: {}", email);
-        Customer customer = customerRepository.findByEmail(email);
-        if (customer == null) {
-            throw new CustomerNotFoundException("Customer not found with email: " + email);
-        }
-        return customer;
+        return customerRepository.findByEmail(email);
     }
-
 
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
+    public Customer findById(Long id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        return customer.orElse(null);
+    }
 }
+
+
+

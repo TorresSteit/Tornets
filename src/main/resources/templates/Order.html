@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Order Details</title>
+    <link rel="stylesheet" href="/static/css/Order.css">
+</head>
+<body>
+<h2>Order Details</h2>
+<div th:if="${order == null}">
+    <p>Order not found</p>
+</div>
+<div th:if="${order != null}">
+    <h3>Customer Details</h3>
+    <p>Name: <span th:text="${customer.firstname}">Name</span></p>
+    <p>Email: <span th:text="${customer.email}">Email</span></p>
+    <p>Phone: <span th:text="${customer.phone}">Phone</span></p>
+
+    <h3>Ordered Products</h3>
+    <div th:each="cart : ${order.carts}">
+        <h4>Cart</h4>
+        <td>
+            <span th:text="${#dates.format(order.createOrder, 'dd/MM/yyyy HH:mm')}">Date</span>
+        </td>
+        <table>
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Image</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="productInfo : ${cart.productInfos}">
+                <td th:text="${#dates.format(productInfo.cart.createCart, 'dd/MM/yyyy HH:mm')}">Date</td>
+                <td th:text="${productInfo.product.name}">Product Name</td>
+                <td th:text="${productInfo.product.price != null ? #numbers.formatDecimal(productInfo.product.price, 3, 2) : ''}"></td>
+                <td th:text="${productInfo.quantity}">Quantity</td>
+                <td th:text="${productInfo.cart.totalPrice != null ? #numbers.formatDecimal(productInfo.cart.totalPrice, 3, 2) : ''}"></td>
+                <td>
+                    <img th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
+                </td>
+                <td th:text="${order.deliveryStatus}">Pending</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+

@@ -34,7 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
     private PasswordEncoder passwordEncoder;
 
-
     @Autowired
     public void setUserDetailsService(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -50,7 +49,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -58,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
+                .antMatchers("/").hasAnyRole("Users", "Admin")
                 .antMatchers("/static/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .antMatchers("/registration", "/login").permitAll()
 
@@ -72,39 +71,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login").permitAll();
+                .logoutSuccessUrl("/login").permitAll()
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/unauthorized")
+                .and()
+                .rememberMe()
+                .key("uniqueAndSecret")
+                .userDetailsService(userDetailsService)
+                .tokenValiditySeconds(86400);
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-    @Bean
-    public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com"); // Use Gmail SMTP host
-        mailSender.setPort(587);
-
-        mailSender.setUsername("taras.royale@gmail.com"); // Your Gmail address
-        mailSender.setPassword("ltge zueq mqxf bazx"); // Your Gmail password
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-
-        return mailSender;
-    }
-
 }
+
 
 
 

@@ -5,12 +5,10 @@ import com.example.tornet.model.Product;
 import com.example.tornet.model.ProductInfo;
 import com.example.tornet.reposotory.ProductInfoRepository;
 import com.example.tornet.reposotory.ProductRepostory;
-import com.example.tornet.service.CategoryService;
-import com.example.tornet.service.CustomerService;
-import com.example.tornet.service.ProdcutInfoService;
-import com.example.tornet.service.ProductService;
+import com.example.tornet.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,15 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-@Controller
+import java.util.*;
 
 
 @AllArgsConstructor
+@Controller
 @Slf4j
+
 public class Admin {
 
 
@@ -41,12 +37,16 @@ public class Admin {
 private final ProductInfoRepository productInfoRepository;
     private final ProductRepostory productRepostory;
     private final ProdcutInfoService prodcutInfoService;
+    private final OrderService orderService;
 
     @GetMapping("/Admin")
+
     public String adminPanel(Model model) {
+
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("customers", customerService.getAllCustomers());
+        model.addAttribute("orders", orderService.getAllOrders());
         return "Admin";
     }
 
@@ -59,24 +59,21 @@ private final ProductInfoRepository productInfoRepository;
     }
 
 
-    // Получение всех категорий
+
     @GetMapping("/categories")
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-
-
     @PostMapping("/addProduct")
     public String addProduct(@RequestParam("name") String name,
-                             @RequestParam("brand") String brand,
-                             @RequestParam("price") BigDecimal price,
+                             @RequestParam("price") double price,
                              @RequestParam("description") String description,
                              @RequestParam("mainImage") MultipartFile mainImage,
                              @RequestParam("additionalImages1") MultipartFile additionalImages1,
                              @RequestParam("additionalImages2") MultipartFile additionalImages2,
-                             @RequestParam("sizes") String [] sizes,
+                             @RequestParam("sizes") List<String> sizes,
                              @RequestParam("quantity") int quantity,
                              @RequestParam("categoryId") Long categoryId,
                              Model model) {
@@ -89,7 +86,6 @@ private final ProductInfoRepository productInfoRepository;
 
             Product product = new Product();
             product.setName(name);
-            product.setBrand(brand);
             product.setPrice(price);
             product.setCategory(category);
 
@@ -99,12 +95,12 @@ private final ProductInfoRepository productInfoRepository;
             }
 
             List<ProductInfo> productInfoList = new ArrayList<>();
-            for (int i = 0; i < sizes.length; i++) {
+            for (String size : sizes) {
                 ProductInfo productInfo = new ProductInfo();
                 productInfo.setDescriptions(description);
-                productInfo.setSizes(sizes[i]);
+                productInfo.setSizes(Collections.singletonList(size)); // Сохраняем каждый размер
                 productInfo.setQuantity(quantity);
-                
+
                 if (!additionalImages1.isEmpty()) {
                     byte[] additionImage = additionalImages1.getBytes();
                     productInfo.setAdditionalPhoto1(additionImage);
@@ -125,6 +121,7 @@ private final ProductInfoRepository productInfoRepository;
 
         return "redirect:/Admin";
     }
+
 
 
     @GetMapping("/images/{id}")
@@ -166,6 +163,24 @@ private final ProductInfoRepository productInfoRepository;
     }
 
 
+    @DeleteMapping("/Admin/delete/{id}")
+    public String deleteProduct(@PathVariable Long id) {
+        try {
+            log.info("Попытка удалить продукт с ID: {}", id);
+            productService.deleteProductById(id);
+        } catch (ResourceNotFoundException e) {
+            log.error("Продукт с ID {} не найден", id);
+            return "redirect:/error";
+        }
+        return "redirect:/Admin";
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleResourceNotFoundException(ResourceNotFoundException e, Model model) {
+        model.addAttribute("error", e.getMessage());
+        return "error"; // Убедитесь, что у вас есть шаблон error.html для отображения ошибок
+    }
 
 
 
