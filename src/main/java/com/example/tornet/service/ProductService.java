@@ -40,7 +40,7 @@ public class ProductService {
 
         for (Category category : categories) {
             List<Product> products = category.getProducts();
-            category.setProducts(products); // Здесь мы связываем категории с продуктами
+            category.setProducts(products);
         }
 
         return categories;
@@ -78,7 +78,7 @@ public class ProductService {
 
     @Transactional
     public Product getProductById(Long id) {
-        // Запрос для получения продукта по идентификатору сразу со всеми связанными ProductInfo
+
         return productRepostory.findByIdWithProductInfo(id);
     }
     public Product findProductById(Long productId) {
@@ -103,7 +103,7 @@ public class ProductService {
     public void deleteProductById(Long id) {
         Optional<Product> product = productRepostory.findById(id);
         if (product.isPresent()) {
-            log.info("Удаление продукта с ID: {}", id);
+            log.info("Delete ID: {}", id);
             productRepostory.delete(product.get());
         } else {
             log.warn("Продукт с ID {} не найден", id);
@@ -121,4 +121,10 @@ public class ProductService {
     public Page<Product> getProductsPage(Pageable pageable) {
         return productRepostory.findAll(pageable);
     }
+
+    public List<Product> searchProductsByName(String name) {
+        return productRepostory.findByNameContainingIgnoreCase(name);
+    }
+
+
 }

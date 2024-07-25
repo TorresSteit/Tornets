@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Page</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/static/css/ErrorPage.css">
+</head>
+<body>
+<div class="error-container">
+    <h1>Error</h1>
+    <p th:text="${error}">An unexpected error has occurred.</p>
+    <a href="/Main" title="Go to Homepage">Go to Homepage</a>
+</div>
+</body>
+</html>

@@ -30,6 +30,7 @@
                 <th>Quantity</th>
                 <th>Total</th>
                 <th>Image</th>
+                <th>Size</th>
                 <th>Status</th>
             </tr>
             </thead>
@@ -43,11 +44,15 @@
                 <td>
                     <img th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
                 </td>
+                <td th:each="size : ${productInfo.sizes}" th:text="${size}">Size</td>
                 <td th:text="${order.deliveryStatus}">Pending</td>
             </tr>
             </tbody>
         </table>
     </div>
+</div>
+<div class="main-button-container">
+    <a href="/Main"><button class="main-button">Main</button></a>
 </div>
 </body>
 </html>

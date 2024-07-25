@@ -1,8 +1,6 @@
 package com.example.tornet.controller;
 
-import com.example.tornet.model.Category;
-import com.example.tornet.model.Product;
-import com.example.tornet.model.ProductInfo;
+import com.example.tornet.model.*;
 import com.example.tornet.reposotory.ProductInfoRepository;
 import com.example.tornet.reposotory.ProductRepostory;
 import com.example.tornet.service.*;
@@ -39,25 +37,53 @@ private final ProductInfoRepository productInfoRepository;
     private final ProdcutInfoService prodcutInfoService;
     private final OrderService orderService;
 
-    @GetMapping("/Admin")
 
+    @GetMapping("/Admin")
     public String adminPanel(Model model) {
+        List<Order> orders = orderService.getAllOrders();
+        for (Order order : orders) {
+            List<ProductInfo> productInfos = new ArrayList<>();
+            for (Cart cart : order.getCarts()) {
+                productInfos.addAll(cart.getProductInfos());
+            }
+            order.setProductInfos(productInfos);
+        }
+
+
 
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("customers", customerService.getAllCustomers());
-        model.addAttribute("orders", orderService.getAllOrders());
+
+        model.addAttribute("orders", orders);
+
+
         return "Admin";
     }
 
     @PostMapping("/addCategory")
-    public ResponseEntity<Category> addCategory(@RequestParam("title") String title) {
+    public String addCategory(@RequestParam("title") String title) {
         Category category = new Category();
         category.setTitle(title);
-        Category savedCategory = categoryService.addCategory(category);
-        return new ResponseEntity<>(savedCategory, HttpStatus.CREATED);
+        categoryService.addCategory(category);
+        return "redirect:/Admin";
     }
+    @PostMapping("/deleteCategory/{categoryId}")
+    public String deleteCategory(@PathVariable("categoryId") Long categoryId, Model model) {
+        log.info("Request to delete category with id: {}", categoryId);
 
+        Category category = categoryService.getCategoryById(categoryId);
+        if (category == null) {
+            log.warn("Category with id: {} not found", categoryId);
+            model.addAttribute("error", "Category not found");
+            return "redirect:/Admin";
+        }
+
+        categoryService.deleteCategory(categoryId);
+        log.info("Category with id: {} successfully deleted", categoryId);
+
+        return "redirect:/Admin";
+    }
 
 
     @GetMapping("/categories")
@@ -98,7 +124,7 @@ private final ProductInfoRepository productInfoRepository;
             for (String size : sizes) {
                 ProductInfo productInfo = new ProductInfo();
                 productInfo.setDescriptions(description);
-                productInfo.setSizes(Collections.singletonList(size)); // Сохраняем каждый размер
+                productInfo.setSizes(Collections.singletonList(size));
                 productInfo.setQuantity(quantity);
 
                 if (!additionalImages1.isEmpty()) {
@@ -113,10 +139,13 @@ private final ProductInfoRepository productInfoRepository;
             }
 
             productService.addProduct(product, productInfoList);
+            log.info("Product '{}' with price '{}' successfully added.", name, price);
+            log.info("Product Info added: {}", productInfoList);
+
 
         } catch (IOException e) {
             log.error("An error occurred while adding the product: {}", e.getMessage());
-            return "redirect:/error";
+            return "redirect:/Admin";
         }
 
         return "redirect:/Admin";
@@ -163,25 +192,16 @@ private final ProductInfoRepository productInfoRepository;
     }
 
 
-    @DeleteMapping("/Admin/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-        try {
-            log.info("Попытка удалить продукт с ID: {}", id);
-            productService.deleteProductById(id);
-        } catch (ResourceNotFoundException e) {
-            log.error("Продукт с ID {} не найден", id);
-            return "redirect:/error";
+    @DeleteMapping("/deleteProduct")
+    public String deleteProduct(@RequestParam("id") Long id, Model model) {
+        Product product = productService.getProductById(id);
+        if (product == null || product.getImage() == null) {
+            model.addAttribute("error", "Product not found");
+            return "redirect:/Admin";
         }
+        productService.deleteProductById(id);
         return "redirect:/Admin";
     }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleResourceNotFoundException(ResourceNotFoundException e, Model model) {
-        model.addAttribute("error", e.getMessage());
-        return "error"; // Убедитесь, что у вас есть шаблон error.html для отображения ошибок
-    }
-
 
 
 

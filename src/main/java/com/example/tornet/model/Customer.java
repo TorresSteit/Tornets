@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString(exclude = {"carts", "orders"})
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

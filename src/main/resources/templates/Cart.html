@@ -17,7 +17,7 @@
         <th>Price</th>
         <th>Sizes</th>
         <th>Quantity</th>
-        <th>Total</th>
+
         <th>Image</th>
         <th>Actions</th>
     </tr>
@@ -31,7 +31,6 @@
         <td th:text="${productInfo.product.price != null ? #numbers.formatDecimal(productInfo.product.price, 3, 2) : ''}"></td>
         <td th:each="size : ${productInfo.sizes}" th:text="${size}">Size</td>
         <td th:text="${productInfo.quantity}">Quantity</td>
-        <td th:text="${productInfo.cart.totalPrice != null ? #numbers.formatDecimal(productInfo.cart.totalPrice, 3, 2) : ''}">Total</td>
         <td>
             <img th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
         </td>
@@ -51,8 +50,6 @@
 <div class="total-price">
     <span>Total Price: </span><span th:text="${cart.totalPrice}"></span>
 </div>
-
-<!-- Form for creating an order -->
 <form th:action="@{/Order/create}" method="post">
     <input type="hidden" name="email" th:value="${cart.customer.email}">
     <button type="submit" class="checkout-button">Checkout</button>

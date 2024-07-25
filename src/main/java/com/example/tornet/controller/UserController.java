@@ -5,9 +5,7 @@ import com.example.tornet.exception.CustomerNotFoundException;
 
 import com.example.tornet.model.Customer;
 import com.example.tornet.model.Role;
-import com.example.tornet.service.CartService;
-import com.example.tornet.service.CustomerService;
-import com.example.tornet.service.EmailSenderService;
+import com.example.tornet.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,9 +41,68 @@ public class UserController {
     private final EmailSenderService emailSenderService;
 
 
+
     @GetMapping("/")
     public String index() {
         return "redirect:/login";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestParam String email,
+                        @RequestParam String password,
+                        HttpServletRequest request,
+                        Model model) {
+        if (email == null || email.isEmpty()) {
+            model.addAttribute("error", true);
+            model.addAttribute("message", "Please enter a valid email address");
+            return "login";
+        }
+
+        try {
+            Customer customer = customerService.findCustomerByEmail(email);
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User authenticatedUser = (User) authentication.getPrincipal();
+
+            if (isAdmin(authenticatedUser)) {
+                System.out.println(isAdmin(authenticatedUser));
+                return "redirect:/Admin";
+            } else {
+                return "redirect:/Main";
+            }
+        } catch (CustomerNotFoundException e) {
+            model.addAttribute("error", true);
+            model.addAttribute("message", "Email address not found");
+            return "login";
+        } catch (AuthenticationException e) {
+            model.addAttribute("error", true);
+            model.addAttribute("message", "Invalid email or password");
+            return "login";
+        } catch (Exception e) {
+            model.addAttribute("error", true);
+            model.addAttribute("message", "An unexpected error occurred");
+             return "login";
+        }
+    }
+
+    private User getCurrentUser() {
+        return (User) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+    }
+
+    private boolean isAdmin(User user) {
+        Collection<GrantedAuthority> roles = user.getAuthorities();
+
+        for (GrantedAuthority auth : roles) {
+            if ("ROLE_ADMIN".equals(auth.getAuthority()))
+                return true;
+        }
+
+        return false;
     }
 
     @GetMapping("/login")
@@ -53,6 +110,7 @@ public class UserController {
         model.addAttribute("registration", "/registration");
         return "login";
     }
+
 
     @GetMapping("/registration")
     public String showRegistrationForm(Model model) {
@@ -102,71 +160,6 @@ public class UserController {
 
 
 
-    @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        HttpServletRequest request,
-                        Model model) {
-        if (email == null || email.isEmpty()) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Please enter a valid email address");
-            return "login";
-        }
-
-        try {
-            Customer customer = customerService.findCustomerByEmail(email);
-
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            User authenticatedUser = (User) authentication.getPrincipal();
-
-            if (isAdmin(authenticatedUser)) {
-                return "redirect:/Admin";
-            } else {
-                return "redirect:/Main";
-            }
-        } catch (CustomerNotFoundException e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Email address not found");
-            return "login";
-        } catch (AuthenticationException e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Invalid email or password");
-            return "login";
-        } catch (Exception e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "An unexpected error occurred");
-            return "login";
-        }
-    }
-
-
-
-    @GetMapping("/unauthorized")
-    public String unauthorized(Model model) {
-        User user = getCurrentUser();
-        model.addAttribute("login", user.getUsername());
-        return "unauthorized";
-    }
-
-    private User getCurrentUser() {
-        return (User) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
-
-    private boolean isAdmin(User user) {
-        Collection<GrantedAuthority> roles = user.getAuthorities();
-
-        for (GrantedAuthority auth : roles) {
-            if ("ROLE_ADMIN".equals(auth.getAuthority()))
-                return true;
-        }
-
-        return false;
-    }
 
 
 

@@ -7,11 +7,9 @@
 <body>
 <h3>All Orders</h3>
 <div th:each="order : ${orders}">
-    <!-- Order ID at the top of each order section -->
-    <h4 class="order-id">Order ID: <span th:text="${order.id}"></span></h4>
     <div th:each="cart : ${order.carts}">
         <h5 class="cart-header">Cart</h5>
-        <p th:text="'Created on: ' + (${cart.createCart} != null ? ${#dates.format(cart.createCart, 'dd/MM/yyyy HH:mm')} : 'N/A')">Created on: Date</p>
+        <h4 class="order-id">Order ID: <span th:text="${cart.id}"></span></h4>
         <table>
             <thead>
             <tr>
@@ -21,12 +19,13 @@
                 <th>Quantity</th>
                 <th>Total</th>
                 <th>Image</th>
+                <th>Size</th>
                 <th>Status</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="productInfo : ${cart.productInfos}">
-                <td th:text="${cart.createCart != null ? #dates.format(cart.createCart, 'dd/MM/yyyy HH:mm') : 'N/A'}">Date</td>
+                <td th:text="${#dates.format(order.createOrder, 'dd.MM.yyyy')}"></td>
                 <td th:text="${productInfo.product.name}">Product Name</td>
                 <td th:text="${productInfo.product.price != null ? #numbers.formatDecimal(productInfo.product.price, 3, 2) : ''}">Price</td>
                 <td th:text="${productInfo.quantity}">Quantity</td>
@@ -34,11 +33,16 @@
                 <td>
                     <img th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
                 </td>
+                <td th:text="${productInfo.sizes != null ? productInfo.sizes : ''}">Size</td>
                 <td th:text="${order.deliveryStatus}">Status</td>
             </tr>
             </tbody>
         </table>
     </div>
+
+</div>
+<div class="home-button-container">
+    <a href="/Main" class="home-button">Go to Homepage</a>
 </div>
 
 </body>

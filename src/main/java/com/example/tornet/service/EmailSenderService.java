@@ -28,7 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EmailSenderService {
 
-    private static final Logger log = LoggerFactory.getLogger(EmailSenderService.class);
+
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
 
@@ -58,7 +58,7 @@ public class EmailSenderService {
             }
 
             javaMailSender.send(message);
-            log.info("Order confirmation email sent to {}", to);
+
 
         } catch (MessagingException | IOException e) {
             e.printStackTrace();

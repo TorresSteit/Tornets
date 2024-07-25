@@ -5,6 +5,7 @@ package com.example.tornet.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"customer", "order", "productInfos", "products"})
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +30,7 @@ public class Cart {
     private Customer customer;
 
     private BigDecimal totalPrice;
+    private String selectedSize;
 
     @ManyToOne
     @JoinColumn(name = "order_id")

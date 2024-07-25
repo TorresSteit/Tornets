@@ -3,6 +3,7 @@ package com.example.tornet.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"product"})
 public class ProductInfo {
 
     @Id
@@ -41,5 +43,6 @@ public class ProductInfo {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
+
 }
 

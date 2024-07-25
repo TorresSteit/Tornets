@@ -47,19 +47,19 @@ public class MainController {
 
         pageable = PageRequest.of(pageable.getPageNumber(), 6);
 
-        // Get page of products
+
         Page<Product> productPage = productService.getProductsPage(pageable);
 
-        // Get list of categories
+
         List<Category> categoryList = categoryService.getAllCategories();
 
-        // Add attributes to model
+
         model.addAttribute("products", productPage.getContent());
         model.addAttribute("categories", categoryList);
         model.addAttribute("currentPage", productPage.getNumber());
         model.addAttribute("totalPages", productPage.getTotalPages());
 
-        // Retrieve current authenticated user information
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) auth.getPrincipal();
@@ -80,6 +80,7 @@ public class MainController {
         return "redirect:/login";
     }
 
+
     @GetMapping("/Cart")
     public String cartPage(Model model, @RequestParam(name = "page", defaultValue = "0") int page, RedirectAttributes redirectAttributes) {
         try {
@@ -94,7 +95,7 @@ public class MainController {
 
             String currentPrincipalName = authentication.getName();
 
-            // Find customer by email
+
             Customer customer = customerService.findCustomerByEmail(currentPrincipalName);
             if (customer == null) {
                 // Handle case where customer is not found
@@ -121,13 +122,13 @@ public class MainController {
 
 
             model.addAttribute("cart", cart);
-            model.addAttribute("productInfoPage", productInfoPage); // Pass the Page object to Thymeleaf
-            model.addAttribute("totalPages", productInfoPage.getTotalPages()); // Total number of pages
-            model.addAttribute("currentPage", page); // Current page number
+            model.addAttribute("productInfoPage", productInfoPage);
+            model.addAttribute("totalPages", productInfoPage.getTotalPages());
+            model.addAttribute("currentPage", page);
 
-            return "Cart"; // Return the HTML template name
+            return "Cart";
         } catch (Exception e) {
-            // Handle any exceptions
+
             log.error("An error occurred while fetching the cart page: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "An error occurred while fetching the cart page");
             return "redirect:/error-page";
@@ -160,6 +161,7 @@ public class MainController {
         return "Main";
     }
 
+
     @GetMapping("/product/{id}")
     public String getProduct(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id);
@@ -182,7 +184,7 @@ public class MainController {
         model.addAttribute("productInfoList", productInfoList);
         model.addAttribute("encodedImage", encodedImage);
         model.addAttribute("reviews", reviews);
-        model.addAttribute("customer", customer); // Добавляем customer в модель
+        model.addAttribute("customer", customer);
 
         return "product";
     }
@@ -201,7 +203,7 @@ public class MainController {
 
             Long productId = review.getProduct().getId();
 
-            // Check if the product exists
+
             Product product = productService.getProductById(productId);
             if (product == null) {
                 model.addAttribute("error", "Invalid product ID: " + productId);
@@ -218,19 +220,26 @@ public class MainController {
             return "redirect:/product/" + productId;
         } catch (Exception e) {
             model.addAttribute("error", "An error occurred: " + e.getMessage());
-            return "errorPage"; // Redirect to the error page
+            return "ErrorPage";
         }
     }
+
+
 
     @GetMapping("/product")
     public String getProductReviews(@RequestParam Long id, Model model) {
         try {
             List<Review> reviews = reviewService.getReviewsByProductId(id);
+            for (Review review : reviews) {
+                if (review.getCommets() == null || review.getCommets().isEmpty()) {
+                    review.setCommets("No Comments");
+                }
+            }
             model.addAttribute("reviews", reviews);
             return "product"; // Ensure this is the correct template name
         } catch (Exception e) {
             model.addAttribute("error", "An error occurred: " + e.getMessage());
-            return "errorPage"; // Redirect to the error page
+            return "ErrorPage";
         }
     }
 
@@ -261,6 +270,8 @@ public class MainController {
 
 
 
+
+
     @PostMapping("/cart/add")
     public String addToCart(@RequestParam("productId") Long productId,
                             @RequestParam(name = "quantity", defaultValue = "1") int quantity,
@@ -279,6 +290,7 @@ public class MainController {
 
         if (added) {
             return "redirect:/Cart";
+
         } else {
             model.addAttribute("error", "Failed to add product to cart.");
             return "redirect:/error-page";
@@ -387,7 +399,6 @@ public class MainController {
 
 
 
-
     @GetMapping("/Order/{orderId}")
     public String getOrderDetails(@PathVariable("orderId") Long orderId, Model model) {
         try {
@@ -440,7 +451,7 @@ public class MainController {
             return "error-page"; // Handle case where order is not found
         }
         model.addAttribute("order", order);
-        return "order-confirmation"; // Assuming "order-confirmation" is your confirmation view template
+        return "order-confirmation";
     }
 
     @GetMapping("/Orders-All")

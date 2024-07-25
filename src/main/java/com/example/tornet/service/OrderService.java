@@ -1,7 +1,9 @@
 package com.example.tornet.service;
 
+import com.example.tornet.model.Cart;
 import com.example.tornet.model.Order;
 import com.example.tornet.model.Product;
+import com.example.tornet.reposotory.CartRepository;
 import com.example.tornet.reposotory.OrderRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
 
     @Transactional
     public Order createOrder(Order order) {
@@ -56,5 +59,6 @@ public class OrderService {
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
     }
+
 }
 

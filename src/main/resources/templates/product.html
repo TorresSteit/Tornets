@@ -45,7 +45,7 @@
     <div class="size-buttons">
         <div th:each="productInfo : ${product.productInfo}">
             <div th:each="size : ${productInfo.sizes}">
-                <button type="button" class="size-button" th:attr="data-size=${size}" th:text="${size}"></button>
+                <button type="button" class="size-button" th:attr="data-size=${size}" th:text="${size}" onclick="selectSize(this.getAttribute('data-size'))"></button>
             </div>
         </div>
     </div>
@@ -58,13 +58,11 @@
     <button type="submit">Add to Cart</button>
 </form>
 
-<div>
-    Selected Size: <span id="selectedSize">--</span>
-</div>
+<p>Selected Size: <span id="selectedSizeDisplay">--</span></p>
+<div id="sizeMessage" class="message"></div>
 <div class="back-to-home">
     <button onclick="window.location.href='/Main'" class="home-button">Home</button>
 </div>
-
 
 
 <div class="comments-section">
@@ -83,30 +81,21 @@
         <button type="submit" class="submit-review">Submit Review</button>
     </form>
 
-    <div th:each="review : ${reviews}" class="review">
-        <div th:if="${review.customer != null}">
-            <p th:text="${review.customer.email}">Customer Email</p>
+    <div class="reviews-container">
+        <h2>Reviews</h2>
+        <div th:each="review : ${reviews}" class="review-item">
+            <p class="review-email" th:text="${review.customer.email}">Email</p>
+            <p class="review-comment" th:text="${review.commets}">No Comments</p>
+            <p class="review-date" th:text="${#dates.format(review.createComments, 'yyyy-MM-dd')}">Date</p>
+            <button class="like-button" th:onclick="'likeReview(' + ${review.id} + ')'">Like (<span th:text="${review.likes}">0</span>)</button>
         </div>
-        <div th:unless="${review.customer != null}">
-            <p>Customer Email not available</p>
-        </div>
-        <div th:if="${review.commets != null}">
-            <p th:text="${review.commets}">Review Comments</p>
-        </div>
-        <div th:unless="${review.commets != null}">
-            <p>No Comments</p>
-        </div>
-        <p class="review-date" th:text="${#dates.format(review.createComments, 'yyyy-MM-dd')}">Review Date</p>
-        <button type="button" class="like-button" th:attr="data-review-id=${review.id}" onclick="likeReview(${review.id})">
-            Like (<span th:text="${review.likes}">0</span>)
-        </button>
     </div>
 </div>
 
 
 
 
-<script src="/static/JS/ProductDetails.js"></script>
+<script src="/static/JS/product.js"></script>
 
 
 </body>

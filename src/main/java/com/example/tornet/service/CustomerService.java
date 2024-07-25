@@ -32,8 +32,6 @@ public class CustomerService {
             log.error("Email already exists during user registration.");
             return false;
         }
-
-        // Хэширование пароля перед сохранением
         String encodedPassword = passwordEncoder.encode(customer.getPassword());
         customer.setPassword(encodedPassword);
 
