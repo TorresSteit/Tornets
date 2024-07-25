@@ -16,16 +16,16 @@ public interface ProductRepostory extends JpaRepository<Product, Long> {
 
     Product findByName(String name);
 
-    // Найти продукт по его бренду
 
 
-    // Найти продукты по категории
+
+
     List<Product> findByCategory(Category category);
 
-    // Найти продукты по цене, меньше указанной
+
     List<Product> findByPriceLessThan(BigDecimal price);
 
-    // Найти продукты по цене, больше указанной
+
     List<Product> findByPriceGreaterThan(BigDecimal price);
 
     List<Product> findByCategoryId(Long categoryId);

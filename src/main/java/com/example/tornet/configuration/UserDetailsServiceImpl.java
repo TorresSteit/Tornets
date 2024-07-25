@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -23,10 +24,11 @@ import java.util.List;
 import java.util.Optional;
 
 
+@Service
 @Slf4j
 @AllArgsConstructor
-@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
 
     private final CustomerService customerService;
 
@@ -43,3 +45,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new User(customer.getEmail(), customer.getPassword(), roles);
     }
 }
+
