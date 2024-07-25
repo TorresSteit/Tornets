@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -85,7 +84,7 @@ public class UserController {
             model.addAttribute("message", "An unexpected error occurred");
              return "login";
         }
-    }
+    }//В мене є питання чогось не працює адмінка це мені  помогах чат бо в мене була 403 і я просто перший раз связував Фронт і Бек частину
 
     private User getCurrentUser() {
         return (User) SecurityContextHolder
@@ -127,7 +126,7 @@ public class UserController {
                 return "registration";
             }
 
-            // Check if a customer with the same email exists
+
             if (customerService.findCustomerByEmail(customer.getEmail()) != null) {
                 log.error("Email already exists during user registration.");
                 customerResult.rejectValue("email", null, "Email already exists");

@@ -63,10 +63,9 @@ public class MainController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            // Retrieve customer details based on logged in user
             Customer customer = customerService.findCustomerByEmail(userDetails.getUsername());
             model.addAttribute("currentUser", customer);
-        }
+        }//instanceof для чого цей метод просто в мене не працював код иі що він робить
 
         return "Main";
     }
@@ -84,10 +83,9 @@ public class MainController {
     @GetMapping("/Cart")
     public String cartPage(Model model, @RequestParam(name = "page", defaultValue = "0") int page, RedirectAttributes redirectAttributes) {
         try {
-            // Get current authenticated user's email
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
-                // Handle case where user is not authenticated
                 log.warn("No authenticated user found or user details not found in security context");
                 redirectAttributes.addFlashAttribute("error", "Authentication error: No authenticated user found");
                 return "redirect:/error-page";
@@ -97,15 +95,15 @@ public class MainController {
 
 
             Customer customer = customerService.findCustomerByEmail(currentPrincipalName);
+            log.info("Email customer", currentPrincipalName);
             if (customer == null) {
-                // Handle case where customer is not found
                 log.warn("Customer not found for email: {}", currentPrincipalName);
                 redirectAttributes.addFlashAttribute("error", "Customer not found for email: " + currentPrincipalName);
                 return "redirect:/error-page";
             }
 
 
-            Pageable pageable = PageRequest.of(page, 6); // Page size of 4 items per page
+            Pageable pageable = PageRequest.of(page, 6);
 
 
             Cart cart = cartService.getCartByCustomer(customer);
@@ -113,7 +111,7 @@ public class MainController {
                 cart = new Cart();
                 cart.setCustomer(customer);
                 cart.setProductInfos(new ArrayList<>());
-                cartService.saveCart(cart); // Save the cart to ensure it's managed by the persistence context
+                cartService.saveCart(cart);
                 log.info("Initialized a new cart for customer: {}", currentPrincipalName);
             }
 
@@ -172,14 +170,15 @@ public class MainController {
         String userEmail = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            userEmail = userDetails.getUsername(); // Обычно это email, но может быть и другое значение
+            userEmail = userDetails.getUsername();
         }
         Customer customer = new Customer();
         if (userEmail != null) {
             customer = customerService.findCustomerByEmail(userEmail);
         }
+        //цей мемент трохи не роузмів як перейти по айдшінку на сторінку інформаціїб це знайшов на стек офревловб 404 помилка
 
-        // Добавляем атрибуты в модель
+
         model.addAttribute("product", product);
         model.addAttribute("productInfoList", productInfoList);
         model.addAttribute("encodedImage", encodedImage);
@@ -216,6 +215,7 @@ public class MainController {
             reviewService.addReview(review);
 
             log.info("Added review for product with ID: {}", productId);
+            //чогось не показує комнетиб але не знаю в чом причина
 
             return "redirect:/product/" + productId;
         } catch (Exception e) {
@@ -371,7 +371,7 @@ public class MainController {
             List<Product> products = carts.stream()
                     .flatMap(cart -> cart.getProductInfos().stream())
                     .map(ProductInfo::getProduct)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());//трохи тут не розумів для чого це просто
 
             model.addAttribute("products", products);
             model.addAttribute("customer", customer);
@@ -418,7 +418,7 @@ public class MainController {
                 }
             }
 
-            // Получаем список продуктов из заказов
+
             List<ProductInfo> productInfos = order.getCarts().stream()
                     .flatMap(cart -> cart.getProductInfos().stream())
                     .collect(Collectors.toList());

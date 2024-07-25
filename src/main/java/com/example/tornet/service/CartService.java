@@ -71,11 +71,11 @@ public class CartService {
                 cart.getProductInfos().add(productInfo);
             }
 
-            // Пересчитываем общую стоимость корзины
+
             BigDecimal totalPrice = calculateTotalPrice(cart.getProductInfos());
             cart.setTotalPrice(totalPrice);
 
-            // Сохраняем изменения в базе данных
+
             cartRepository.save(cart);
 
             return true;

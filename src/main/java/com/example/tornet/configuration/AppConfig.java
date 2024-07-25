@@ -23,7 +23,7 @@ public class AppConfig {
     public CommandLineRunner demo(final CustomerService customerService,
                                   final PasswordEncoder encoder) {
         return args -> {
-            // Создание администратора
+
             Customer adminCustomer = new Customer();
             adminCustomer.setEmail(ADMIN_EMAIL);
             adminCustomer.setPassword(encoder.encode("1"));
@@ -32,7 +32,7 @@ public class AppConfig {
 
             customerService.save(adminCustomer);
 
-            // Создание обычного пользователя
+
             Customer userCustomer = new Customer();
             userCustomer.setEmail("user@example.com");
             userCustomer.setPassword(encoder.encode("2"));
