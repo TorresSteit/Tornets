@@ -37,9 +37,10 @@ private final ProductInfoRepository productInfoRepository;
     private final ProdcutInfoService prodcutInfoService;
     private final OrderService orderService;
 
-
     @GetMapping("/Admin")
     public String adminPanel(Model model) {
+        log.info("Admin home page accessed");
+        log.error("NOt founded page");
         List<Order> orders = orderService.getAllOrders();
         for (Order order : orders) {
             List<ProductInfo> productInfos = new ArrayList<>();

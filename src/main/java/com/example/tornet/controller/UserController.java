@@ -3,13 +3,18 @@ package com.example.tornet.controller;
 import com.example.tornet.configuration.UserDetailsServiceImpl;
 import com.example.tornet.exception.CustomerNotFoundException;
 
+import com.example.tornet.model.Category;
 import com.example.tornet.model.Customer;
+import com.example.tornet.model.Product;
 import com.example.tornet.model.Role;
 import com.example.tornet.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -20,12 +25,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-import java.util.Date;
+import java.util.List;
+
+
 
 @Controller
 @Slf4j
@@ -34,142 +40,130 @@ public class UserController {
 
     private final CustomerService customerService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final UserDetailsServiceImpl userDetailsService;
-    private final CartService cartService;
-    private final EmailSenderService emailSenderService;
-
-
+    private final ProductService productService;
+    private final CategoryService categoryService;
 
     @GetMapping("/")
-    public String index() {
-        return "redirect:/login";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        HttpServletRequest request,
-                        Model model) {
-        if (email == null || email.isEmpty()) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Please enter a valid email address");
-            return "login";
+    public String index(Model model, Pageable pageable) {
+        User user = getCurrentUser();
+        if (user == null) {
+            log.info("No authenticated user found. Redirecting to login page.");
+            return "redirect:/login";
         }
 
-        try {
-            Customer customer = customerService.findCustomerByEmail(email);
+        log.info("Authenticated user: {}", user.getUsername());
 
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(email, password));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            User authenticatedUser = (User) authentication.getPrincipal();
-
-            if (isAdmin(authenticatedUser)) {
-                System.out.println(isAdmin(authenticatedUser));
-                return "redirect:/Admin";
-            } else {
-                return "redirect:/Main";
-            }
-        } catch (CustomerNotFoundException e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Email address not found");
-            return "login";
-        } catch (AuthenticationException e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "Invalid email or password");
-            return "login";
-        } catch (Exception e) {
-            model.addAttribute("error", true);
-            model.addAttribute("message", "An unexpected error occurred");
-             return "login";
-        }
-    }//В мене є питання чогось не працює адмінка це мені  помогах чат бо в мене була 403 і я просто перший раз связував Фронт і Бек частину
-
-    private User getCurrentUser() {
-        return (User) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-    }
-
-    private boolean isAdmin(User user) {
-        Collection<GrantedAuthority> roles = user.getAuthorities();
-
-        for (GrantedAuthority auth : roles) {
-            if ("ROLE_ADMIN".equals(auth.getAuthority()))
-                return true;
+        if (isAdmin(user)) {
+            log.info("User is admin. Redirecting to admin page.");
+            return "redirect:/Admin";
         }
 
-        return false;
+        String email = user.getUsername();
+        Customer customer = customerService.findCustomerByEmail(email);
+
+        if (customer == null) {
+            log.error("No customer found for email: {}", email);
+            return "redirect:/errorPage";
+        }
+
+        pageable = PageRequest.of(pageable.getPageNumber(), 6);
+
+        Page<Product> productPage = productService.getProductsPage(pageable);
+        List<Category> categoryList = categoryService.getAllCategories();
+
+        model.addAttribute("products", productPage.getContent());
+        model.addAttribute("categories", categoryList);
+        model.addAttribute("currentPage", productPage.getNumber());
+        model.addAttribute("totalPages", productPage.getTotalPages());
+        model.addAttribute("currentUser", customer);
+
+        return "Main";
     }
 
     @GetMapping("/login")
-    public String loginPage(Model model) {
-        model.addAttribute("registration", "/registration");
+    public String loginPage() {
         return "login";
     }
 
-
     @GetMapping("/registration")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("customer", new Customer());
-        return "registration";
+    public String registerPage() {
+        return "register";
     }
 
-    @PostMapping("/registration")
-    public String registerUser(@ModelAttribute("customer") Customer customer, BindingResult customerResult,
-                               BindingResult addressResult, Model model) {
+    @PostMapping("/register")
+    public String registerUser(@RequestParam String email,
+                               @RequestParam String password,
+                               @RequestParam String  firstname,
+                               @RequestParam String lastname,
+
+                               @RequestParam(required = false) String phone,
+                               @RequestParam(required = false) String street,
+                               @RequestParam(required = false) String city,
+                               @RequestParam(required = false) String state,
+                               @RequestParam(required = false) String zip,
+                               Model model) {
+        if (email.isEmpty() || password.isEmpty()) {
+            model.addAttribute("error", "Email and password are required");
+            return "register";
+        }
+
+        if (customerService.findCustomerByEmail(email) != null) {
+            model.addAttribute("exists", true);
+            model.addAttribute("email", email);
+            log.info("User is already registered. Redirecting to login page.");
+            return "register";
+        }
+
+        String passHash = passwordEncoder.encode(password);
+
+        log.info("Attempting to create user with email: {}", email);
+        log.debug("Password hash: {}", passHash);
+        log.debug("Phone: {}, Street: {}, City: {}, State: {}, Zip: {}", phone, street, city, state, zip);
+
         try {
-            if (customerResult.hasErrors() || addressResult.hasErrors()) {
-                log.error("Validation errors occurred during user registration.");
-                return "registration";
-            }
-
-
-            if (customerService.findCustomerByEmail(customer.getEmail()) != null) {
-                log.error("Email already exists during user registration.");
-                customerResult.rejectValue("email", null, "Email already exists");
-                return "registration";
-            }
-
-            customer.setRole(Role.Users);
-            customer.setCreateDateCustomer(new Date());
-            if (customerService.save(customer)) {
-
-                UserDetails userDetails = userDetailsService.loadUserByUsername(customer.getEmail());
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                return "redirect:/Main";
-            } else {
-                log.error("Failed to save the customer during registration.");
-                return "registration";
+            if (!customerService.addUser(email, passHash, Role.Users, firstname, lastname, phone, street, city, state, zip)) {
+                model.addAttribute("error", "Registration failed. Please try again.");
+                log.error("Failed to create user with email: {}", email);
+                return "register";
             }
         } catch (Exception e) {
-            log.error("An error occurred during registration", e);
-            model.addAttribute("error", true);
-            model.addAttribute("message", "An unexpected error occurred");
-            return "registration";
+            log.error("Exception during user registration: ", e);
+            model.addAttribute("error", "An error occurred during registration. Please try again.");
+            return "register";
         }
+
+        log.info("Created new user: {}", email);
+        return "redirect:/login";
     }
 
+    @GetMapping("/unauthorized")
+    public String unauthorized(Model model) {
+        User user = getCurrentUser();
+        model.addAttribute("login", user != null ? user.getUsername() : "Guest");
+        return "unauthorized";
+    }
 
+    @GetMapping("/errorPage")
+    public String errorPage(Model model) {
+        model.addAttribute("errorMessage", "An unexpected error occurred. Please try again later.");
+        return "ErrorPage";
+    }
 
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal().equals("anonymousUser")) {
+            return null;
+        }
+        return (User) authentication.getPrincipal();
+    }
 
-
-
-
-
-
-
-
+    private boolean isAdmin(User user) {
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(auth -> "ROLE_Admin".equals(auth.getAuthority()));
+        log.info("Is user {} admin: {}", user.getUsername(), isAdmin);
+        return isAdmin;
+    }
 }
-
-
-
-
-
 
 
 

@@ -45,27 +45,7 @@ public class MainController {
     @GetMapping("/Main")
     public String mainPage(Model model, Pageable pageable) {
 
-        pageable = PageRequest.of(pageable.getPageNumber(), 6);
 
-
-        Page<Product> productPage = productService.getProductsPage(pageable);
-
-
-        List<Category> categoryList = categoryService.getAllCategories();
-
-
-        model.addAttribute("products", productPage.getContent());
-        model.addAttribute("categories", categoryList);
-        model.addAttribute("currentPage", productPage.getNumber());
-        model.addAttribute("totalPages", productPage.getTotalPages());
-
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            Customer customer = customerService.findCustomerByEmail(userDetails.getUsername());
-            model.addAttribute("currentUser", customer);
-        }//instanceof для чого цей метод просто в мене не працював код иі що він робить
 
         return "Main";
     }

@@ -34,12 +34,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Customer customer = customerService.findCustomerByEmail(email);
         if (customer == null) {
+            log.error("Customer with email {} not found", email);
             throw new UsernameNotFoundException("Customer with email " + email + " not found");
         }
+
         List<GrantedAuthority> roles = Arrays.asList(
-                new SimpleGrantedAuthority(customer.getRole().toString())
+                new SimpleGrantedAuthority( customer.getRole().toString())
         );
 
+        log.info("User {} has roles: {}", email, roles);
         return new User(customer.getEmail(), customer.getPassword(), roles);
     }
 }

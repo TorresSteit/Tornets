@@ -59,7 +59,8 @@ public class Customer {
     private  Delivery delivery;
 
 
-
-
+    public boolean isAdmin() {
+        return "Role_ADMIN".equals(role);
+    }
 }
 
