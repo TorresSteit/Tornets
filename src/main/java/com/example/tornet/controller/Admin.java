@@ -39,7 +39,7 @@ private final ProductInfoRepository productInfoRepository;
 
 
     @GetMapping("/Admin")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+
     public String adminPanel(Model model) {
         List<Order> orders = orderService.getAllOrders();
         for (Order order : orders) {

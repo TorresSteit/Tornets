@@ -69,6 +69,9 @@ public class ProductService {
             productInfoRepository.save(productInfo);
         }
     }
+    public List<Product> findByPattern(String pattern) {
+        return productRepostory.findByNameContainingIgnoreCase(pattern);
+    }
 
 
 

@@ -18,16 +18,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Slf4j
 public class AppConfig extends GlobalMethodSecurityConfiguration {
 
-    public static final String ADMIN_EMAIL = "admin@example.com"; // Ensure email is valid
+    public static final String ADMIN_EMAIL = "taras.royale@gmail.com"; // Ensure email is valid
 
     @Bean
     public CommandLineRunner demo(final CustomerService service, final PasswordEncoder encoder) {
         return args -> {
-            service.addUser(ADMIN_EMAIL, encoder.encode("1"), Role.Admin, "Admin", "User", "1234567890", "123 Main St", "City", "State", "Country", "12345");
-        log.info(ADMIN_EMAIL);
-        log.info(encoder.encode("1"));
-        };
+            service.addUser(ADMIN_EMAIL, encoder.encode("1"), Role.Admin, "Admin", "User", "1234567890", "123 Main St", "City", "State", "12345");
+            log.info("Admin user created with email: {}", ADMIN_EMAIL);
+            log.info("Encoded admin password: {}", encoder.encode("1"));
+        };//Є одна проеблма в том що коли ставлю тяжкий пароль то воно не хоче заходити
     }
 }
+
 
 

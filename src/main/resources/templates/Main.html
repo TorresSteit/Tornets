@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Display</title>
     <link rel="stylesheet" href="/static/css/Main.css">
-    <!-- Добавленная ссылка на CSS-файл -->
 </head>
 <body>
 <div class="container">
-    <!-- Левая часть для меню категорий -->
     <button class="toggle-button">&#9776;</button>
-
     <div class="category-menu">
         <ul>
             <li th:each="category : ${categories}">
@@ -22,21 +19,21 @@
 
     <div class="main-content">
         <div class="user-controls">
-            <input type="text" class="search-input" placeholder="Search">
-            <button class="search-btn">&#128269;</button>
+            <form th:action="@{/search}" method="post" class="search-form">
+                <input type="text" name="pattern" class="search-input" placeholder="Search" required>
+                <button type="submit" class="search-btn">&#128269;</button>
+            </form>
             <a href="/logout"><button class="logout">Logout</button></a>
             <a href="/Cart"><button class="cart-btn">&#128722;</button></a>
             <div class="user-menu">
                 <button class="user-btn" id="userBtn">&#128100;</button>
                 <div class="dropdown-content" id="userDropdown">
                     <a href="/Orders-All">View Orders</a>
-
                 </div>
             </div>
         </div>
 
         <div class="product-display">
-            <!-- Отображение продуктов -->
             <div th:each="product : ${products}" class="product">
                 <img th:src="@{'/images/' + ${product.id}}" th:alt="${product.name}" class="product-image">
                 <div class="details">
@@ -72,5 +69,6 @@
 
 </body>
 </html>
+
 
 
