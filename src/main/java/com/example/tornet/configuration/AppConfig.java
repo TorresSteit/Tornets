@@ -23,11 +23,12 @@ public class AppConfig extends GlobalMethodSecurityConfiguration {
     @Bean
     public CommandLineRunner demo(final CustomerService service, final PasswordEncoder encoder) {
         return args -> {
-            service.addUser(ADMIN_EMAIL, encoder.encode("1"), Role.Admin, "Admin", "User", "1234567890", "123 Main St", "City", "State", "Country", "12345");
-        log.info(ADMIN_EMAIL);
-        log.info(encoder.encode("1"));
+            service.addUser(ADMIN_EMAIL, encoder.encode("1"), Role.Admin, "Admin", "User", "1234567890", "123 Main St", "City", "State", "12345");
+            log.info("Admin user created with email: {}", ADMIN_EMAIL);
+            log.info("Encoded admin password: {}", encoder.encode("1"));
         };
     }
 }
+
 
 
