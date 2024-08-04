@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         List<GrantedAuthority> roles = Arrays.asList(
-                new SimpleGrantedAuthority(customer.getRole().toString())
+                new SimpleGrantedAuthority( customer.getRole().toString())
         );
 
         log.info("User {} has roles: {}", email, roles);

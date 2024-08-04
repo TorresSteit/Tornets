@@ -84,6 +84,9 @@ public class UserController {
     @PostMapping("/register")
     public String registerUser(@RequestParam String email,
                                @RequestParam String password,
+                               @RequestParam String  firstname,
+                               @RequestParam String lastname,
+
                                @RequestParam(required = false) String phone,
                                @RequestParam(required = false) String street,
                                @RequestParam(required = false) String city,
@@ -109,7 +112,7 @@ public class UserController {
         log.debug("Phone: {}, Street: {}, City: {}, State: {}, Zip: {}", phone, street, city, state, zip);
 
         try {
-            if (!customerService.addUser(email, passHash, Role.Users, "", "", phone, street, city, state, zip)) {
+            if (!customerService.addUser(email, passHash, Role.Users, firstname, lastname, phone, street, city, state, zip)) {
                 model.addAttribute("error", "Registration failed. Please try again.");
                 log.error("Failed to create user with email: {}", email);
                 return "register";

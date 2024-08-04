@@ -78,7 +78,7 @@ public class ProductTest {
         review2.setProduct(product);
         review2.setCommets("Not bad!");
 
-        product.setReviews(List.of(review1, review2));
+
 
         // Act
         entityManager.persist(product);
@@ -101,10 +101,10 @@ public class ProductTest {
 
         ProductInfo productInfo = new ProductInfo();
         productInfo.setDescriptions("Sample description");
-        productInfo.setSizes(List.of("S", "M"));
+
         productInfo.setQuantity(10);
         productInfo.setProduct(product);
-        product.setProductInfo(List.of(productInfo));
+
 
         entityManager.persist(product);
         entityManager.flush();
