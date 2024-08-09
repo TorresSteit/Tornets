@@ -25,10 +25,7 @@
             <img th:src="@{cid:product__${product.id}}" alt="Product Image"/>
             <p th:text="${product.name}"></p>
             <p th:text="${product.price}"></p>
-            <p>Sizes:</p>
-            <ul>
-                <li th:each="size : ${product.productInfo}" th:text="${size}"></li>
-            </ul>
+
         </li>
     </ul>
 
