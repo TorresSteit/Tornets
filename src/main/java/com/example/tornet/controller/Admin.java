@@ -40,7 +40,8 @@ private final ProductInfoRepository productInfoRepository;
     @GetMapping("/Admin")
     public String adminPanel(Model model) {
         log.info("Admin home page accessed");
-        log.error("NOt founded page");
+        log.error("NOt founded page");  // Это сообщение в логе, которое может быть неуместным
+
         List<Order> orders = orderService.getAllOrders();
         for (Order order : orders) {
             List<ProductInfo> productInfos = new ArrayList<>();
@@ -50,17 +51,14 @@ private final ProductInfoRepository productInfoRepository;
             order.setProductInfos(productInfos);
         }
 
-
-
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("customers", customerService.getAllCustomers());
-
         model.addAttribute("orders", orders);
-
 
         return "Admin";
     }
+
 
     @PostMapping("/addCategory")
     public String addCategory(@RequestParam("title") String title) {

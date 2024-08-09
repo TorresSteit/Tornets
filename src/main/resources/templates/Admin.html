@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -176,26 +177,26 @@
                 <td th:text="${order.customer.email}">Customer</td>
                 <td th:text="${#dates.format(order.createOrder, 'dd/MM/yyyy HH:mm')}">Date</td>
                 <td th:text="${order.deliveryStatus}">Delivery Status</td>
-                <td th:each="productInfo : ${order.productInfos}">
-                    <span th:text="${productInfo.product.name}">Product Name</span>
+                <td>
+                    <span th:each="productInfo : ${order.productInfos}" th:text="${productInfo.product.name}">Product Name</span>
                 </td>
-                <td th:each="productInfo : ${order.productInfos}">
-                    <span th:text="${productInfo.product.price != null ? #numbers.formatDecimal(productInfo.product.price, 3, 2) : ''}">Price</span>
+                <td>
+                    <span th:each="productInfo : ${order.productInfos}" th:text="${productInfo.product.price != null ? #numbers.formatDecimal(productInfo.product.price, 3, 2) : ''}">Price</span>
                 </td>
-                <td th:each="productInfo : ${order.productInfos}">
-                    <span th:text="${productInfo.quantity}">Quantity</span>
+                <td>
+                    <span th:each="productInfo : ${order.productInfos}" th:text="${productInfo.quantity}">Quantity</span>
                 </td>
-                <td th:each="productInfo : ${order.productInfos}">
-                    <span th:text="${productInfo.product.price * productInfo.quantity != null ? #numbers.formatDecimal(productInfo.product.price * productInfo.quantity, 3, 2) : ''}">Total</span>
+                <td>
+                    <span th:each="productInfo : ${order.productInfos}" th:text="${productInfo.product.price * productInfo.quantity != null ? #numbers.formatDecimal(productInfo.product.price * productInfo.quantity, 3, 2) : ''}">Total</span>
                 </td>
-                <td th:each="productInfo : ${order.productInfos}">
-                    <span th:text="${productInfo.sizes}">Size</span>
+                <td>
+                    <span th:each="productInfo : ${order.productInfos}" th:text="${productInfo.sizes}">Size</span>
                 </td>
-                <td th:each="productInfo : ${order.productInfos}">
-                    <img th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
+                <td>
+                    <img th:each="productInfo : ${order.productInfos}" th:src="@{'/images/' + ${productInfo.product.id}}" th:alt="${productInfo.product.name}" class="product-image">
                 </td>
-
             </tr>
+
             </tbody>
         </table>
         <div th:if="${orders == null || orders.isEmpty()}">
